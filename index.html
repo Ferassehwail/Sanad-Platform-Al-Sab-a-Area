@@ -4,424 +4,827 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة مناطق الشهيد عبدالله السبع | م. فراس سحويل</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <title>منظومة مدينة بيت حانون الرقمية - مناطق كتيبة الشهيد عبدالله السبع </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        :root { 
-            --primary: #0f172a; --gold: #b45309; --accent: #3b82f6; 
-            --bg: #f8fafc; --white: #ffffff; --danger: #ef4444;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-        body { background: var(--bg); color: var(--primary); line-height: 1.6; }
-
-        .hero-section {
-            background: linear-gradient(135deg, var(--primary) 0%, #1e293b 100%);
-            color: white; padding: 50px 20px; text-align: center;
-            border-bottom: 5px solid var(--gold); border-radius: 0 0 40px 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        .hero-section h1 { font-size: 2.2rem; font-weight: 900; margin-bottom: 10px; }
-
-        .container { max-width: 950px; margin: -35px auto 50px; padding: 0 15px; }
-
-        .search-card {
-            background: white; padding: 35px; border-radius: 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.05); text-align: center;
-            border: 1px solid rgba(226, 232, 240, 0.8);
-        }
-        .search-group { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
-        .search-group input { 
-            flex: 1; min-width: 250px; padding: 15px; border-radius: 15px; border: 2.5px solid #e2e8f0; 
-            font-size: 1.2rem; font-weight: 700; text-align: center; transition: 0.3s;
-        }
-        .search-group input:focus { border-color: var(--accent); outline: none; }
-        .btn-search { 
-            background: var(--gold); color: white; padding: 15px 45px; border: none; 
-            border-radius: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 1.1rem;
-        }
-        .btn-search:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(180, 83, 9, 0.3); }
-
-        #mainForm { display: none; margin-top: 30px; animation: fadeInUp 0.7s ease; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-        .section-card { 
-            background: white; padding: 30px; border-radius: 25px; margin-bottom: 25px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.02); border: 1px solid #f1f5f9;
-        }
-        .section-title { 
-            font-weight: 900; color: var(--primary); margin-bottom: 20px; font-size: 1.3rem;
-            border-right: 6px solid var(--gold); padding-right: 15px; display: flex; align-items: center; gap: 10px;
-        }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
-        label { display: block; font-size: 0.9rem; font-weight: 800; color: #64748b; margin-bottom: 8px; }
-        input, select, textarea { 
-            width: 100%; padding: 13px; border: 1.5px solid #e2e8f0; border-radius: 12px; 
-            font-size: 1rem; background: #fcfcfc; transition: 0.3s; color: #1e293b;
-        }
-        input:focus, select:focus, textarea:focus { border-color: var(--gold); outline: none; background: #fff; }
-        input[readonly] { background: #f8fafc; border-style: dashed; color: #64748b; }
-
-        /* تمييز الحقول الفارغة والمطلوبة عند محاولة الحفظ */
-        .invalid-field {
-            border-color: var(--danger) !important;
-            background-color: #fef2f2 !important;
-        }
-        .invalid-field:focus {
-            border-color: var(--danger) !important;
-            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
-        }
-
-        .serial-badge {
-            background: #1e293b; color: #fbbf24; padding: 8px 25px;
-            border-radius: 12px; font-weight: 900; margin-bottom: 20px; display: inline-block;
-            font-size: 1.1rem; border: 1px solid #334155;
-        }
-
-        .declaration-box {
-            background: #fffbeb; border: 2px dashed #f59e0b; padding: 25px;
-            border-radius: 20px; margin-top: 25px; display: flex; align-items: flex-start; gap: 15px;
-        }
-        .declaration-box input[type="checkbox"] { width: 28px; height: 28px; cursor: pointer; margin-top: 5px; }
-        .declaration-text { font-size: 1rem; font-weight: 700; color: #92400e; line-height: 1.7; }
-
-        .buttons-wrapper { display: flex; gap: 15px; margin-top: 25px; }
-        .btn-save { 
-            flex: 2; padding: 22px; background: linear-gradient(to left, #059669, #10b981);
-            color: white; border: none; border-radius: 20px; font-size: 1.4rem; font-weight: 900;
-            cursor: pointer; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2); transition: 0.3s;
-        }
-        .btn-save:disabled { background: #cbd5e1; cursor: not-allowed; box-shadow: none; transform: none; }
-        .btn-new-search {
-            flex: 1; padding: 22px; background: #f1f5f9; color: #475569; border: 2px solid #e2e8f0;
-            border-radius: 20px; font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: 0.3s;
-        }
-        .btn-new-search:hover { background: #e2e8f0; }
-
-        footer { margin-top: 70px; padding: 40px; text-align: center; background: #fff; border-top: 1px solid #e2e8f0; }
-        .designer-frame {
-            display: inline-block; padding: 15px 45px; border-radius: 25px;
-            border: 2.5px solid var(--gold); background: #ffffff;
-            box-shadow: 0 4px 15px rgba(180, 83, 9, 0.1);
-        }
-        .designer-frame h4 { color: var(--primary); font-weight: 900; font-size: 1.2rem; margin-bottom: 5px; }
-        .designer-frame p { color: var(--gold); font-weight: 800; font-size: 1.1rem; }
+        body { font-family: 'Cairo', sans-serif; background-color: #f4f6f9; color: #111827; overflow-x: hidden; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(209, 213, 219, 0.8); box-shadow: 0 10px 30px -5px rgba(0,0,0,0.06); }
+        .main-sidebar { background: #ffffff; border-left: 1px solid rgba(229, 231, 235, 1); box-shadow: 2px 0 15px rgba(0,0,0,0.02); }
+        .input-box { background-color: #ffffff; border: 1px solid #9ca3af; color: #111827; font-weight: 500; transition: all 0.2s; }
+        .input-box:focus { border-color: #2563eb; ring: 2px; ring-color: #3b82f6; box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+        
+        /* تصميم "المبحبح" والمريح للجداول الإدارية */
+        .table-head { background-color: #e5e7eb; color: #111827; font-weight: 700; }
+        .table-row { border-color: #e5e7eb; color: #1f2937; background-color: #ffffff; transition: background-color 0.2s; }
+        .table-row:hover { background-color: #f1f5f9; }
+        .text-muted { color: #4b5563; }
+        .sidebar-item-active { background: linear-gradient(90deg, #2563eb 0%, rgba(37,99,235,0.05) 100%); border-right: 4px solid #2563eb; color: #2563eb !important; font-weight: 700; }
+        
+        /* إعدادات التثبيت والبحبحة (Sticky Columns) */
+        .sticky-col-1 { position: sticky; right: 0; z-index: 10; background-color: inherit; min-width: 140px; box-shadow: -2px 0 5px -2px rgba(0,0,0,0.1); }
+        .sticky-col-2 { position: sticky; right: 140px; z-index: 10; background-color: inherit; min-width: 220px; box-shadow: -4px 0 8px -2px rgba(0,0,0,0.15); border-left: 2px solid #cbd5e1 !important; }
+        th.sticky-col-1, th.sticky-col-2 { background-color: #e5e7eb; z-index: 20; }
+        
+        /* منع التفاف النصوص وزيادة المسافات لتكون واضحة جداً */
+        #familiesTable th, #familiesTable td { white-space: nowrap; padding: 16px 20px; font-size: 0.85rem; vertical-align: middle; }
+        
+        .badge { padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 0.75rem; }
+        .badge-success { background: #d1fae5; color: #065f46; }
+        .badge-danger { background: #fee2e2; color: #991b1b; }
+        .action-btn { padding: 8px 14px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.75rem; color: white; transition: 0.2s; }
+        .btn-edit { background: #3b82f6; }
+        .btn-edit:hover { background: #2563eb; }
+        .btn-del { background: #ef4444; margin-right: 4px; }
+        .btn-del:hover { background: #dc2626; }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex">
 
-<div class="hero-section">
-    <h1>بوابة مناطق الشهيد عبدالله السبع</h1>
-    <p>النظام الذكي لتحديث واستضافة بيانات النازحين - 2026</p>
-    <p>تصميم وتنفيذ / م. فراس محمد سحويل - 2026</p>
-</div>
-
-<div class="container">
-    <div class="search-card" id="searchArea">
-        <h3 style="color: var(--primary); margin-bottom: 10px; font-weight: 900;">استعلام عن الملف برقم الهوية</h3>
-        <div class="search-group">
-            <input type="number" id="idCheck" placeholder="أدخل رقم هوية رب الأسرة">
-            <button class="btn-search" onclick="fetchUserData()">فتح الملف</button>
-        </div>
-    </div>
-
-    <form id="mainForm" onsubmit="submitUpdate(event)" novalidate>
-        <div style="text-align: center;">
-            <div class="serial-badge">الرقم التسلسلي في الكشف: <span id="serial_num">---</span></div>
-        </div>
-
-        <div class="section-card">
-            <div class="section-title">👤 بيانات رب الأسرة الأساسية</div>
-            <div class="grid">
-                <div class="form-group"><label>اسم رب الأسرة رباعي *</label><input type="text" id="full_name" required placeholder="أدخل الاسم كما في الهوية"></div>
-                <div class="form-group"><label>رقم الهوية</label><input type="number" id="head_id_display" readonly></div>
-                <div class="form-group"><label>تاريخ الميلاد *</label><input type="date" id="dob_main" required onchange="calculateAge(this.value, 'age_main')"></div>
-                <div class="form-group"><label>العمر (يُحسب تلقائياً)</label><input type="number" id="age_main" readonly placeholder="0"></div>
-                <div class="form-group"><label>رقم الجوال الأساسي *</label><input type="tel" id="phone_primary" required placeholder="059XXXXXXX"></div>
-                <div class="form-group"><label>رقم الجوال الاحتياطي</label><input type="tel" id="phone_secondary" placeholder="اختياري"></div>
-                <div class="form-group"><label>جنس رب الأسرة *</label><select id="gender_main" required><option value="ذكر">ذكر</option><option value="أنثى">أنثى</option></select></div>
-                <div class="form-group"><label>الحالة الاجتماعية *</label><select id="marital_status" required onchange="handleMaritalStatusChange()"><option value="متزوج">متزوج</option><option value="أرمل">أرمل</option><option value="مطلق">مطلق</option><option value="أعزب">أعزب</option></select></div>
-            </div>
-        </div>
-
-        <div class="section-card" id="wifeSection">
-            <div class="section-title">👩 سجل بيانات الزوجة</div>
-            <div class="grid">
-                <div class="form-group"><label>اسم الزوجة رباعي *</label><input type="text" id="wife_name"></div>
-                <div class="form-group"><label>رقم هوية الزوجة *</label><input type="number" id="wife_id"></div>
-                <div class="form-group"><label>تاريخ ميلاد الزوجة *</label><input type="date" id="wife_dob" onchange="calculateAge(this.value, 'wife_age')"></div>
-                <div class="form-group"><label>عمر الزوجة</label><input type="number" id="wife_age" readonly placeholder="0"></div>
-                <div class="form-group"><label>هل الزوجة حامل؟ *</label><select id="is_pregnant"><option value="لا">لا</option><option value="نعم">نعم</option></select></div>
-                <div class="form-group"><label>هل الزوجة مرضع؟ *</label><select id="is_nursing"><option value="لا">لا</option><option value="نعم">نعم</option></select></div>
-            </div>
-        </div>
-
-        <div class="section-card">
-            <div class="section-title">🏠 مكان النزوح والحالة العامة</div>
-            <div class="grid">
-                <div class="form-group"><label>إجمالي عدد أفراد الأسرة *</label><input type="number" id="member_count" required placeholder="بما فيهم الأب والأم"></div>
-                <div class="form-group"><label>اسم المخيم / مكان السكن الحالي *</label><input type="text" id="camp_name" required placeholder="مثال: مخيم جباليا"></div>
-                <div class="form-group"><label>أمراض مزمنة *</label><input type="text" id="disabilities" required placeholder="اكتب لا يوجد إن لم يتوفر"></div>
-                <div class="form-group"><label>الحالة الصحية العامة *</label><input type="text" id="health_status" required placeholder="جيدة / أمراض مزمنة"></div>
-            </div>
-            <div class="form-group" style="margin-top:20px;">
-                <label>ملاحظات إضافية تود ذكرها للإدارة</label>
-                <textarea id="notes" rows="3" placeholder="أدخل أي ملاحظات هنا..."></textarea>
-            </div>
-        </div>
-
-        <div class="declaration-box">
-            <input type="checkbox" id="agreeCheck" onchange="toggleBtn()">
-            <div class="declaration-text" id="declText">
-                أقر أنا الموضح اسمي أعلاه بصحة كافة البيانات المدخلة، وأتحمل المسؤولية القانونية الكاملة عن أي معلومة خاطئة يتم تقديمها لإدارة مناطق الشهيد عبدالله السبع.
-            </div>
-        </div>
-
-        <div class="buttons-wrapper">
-            <button type="submit" class="btn-save" id="saveBtn" disabled>توثيق وحفظ البيانات النهائية</button>
-            <button type="button" class="btn-new-search" onclick="resetForm()">بحث جديد 🔍</button>
-        </div>
-    </form>
-</div>
-
-<footer>
-    <div class="designer-frame">
-        <h4>تصميم وتطوير م. فراس سحويل "الركن"</h4>
-        <p>جوال: 0594344675</p>
-    </div>
-</footer>
-
-<script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzt2pH3fyMby5c6RZy5oNiBfDLAeUNpt8enCLz7EESM5U8O0fyZ4kP959xppN2QEKe9/exec";
-
-    function toggleBtn() {
-        document.getElementById('saveBtn').disabled = !document.getElementById('agreeCheck').checked;
-    }
-
-    function calculateAge(dob, displayId) {
-        if (!dob) return;
-        const birthDate = new Date(dob);
-        const today = new Date();
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const monthDiff = today.getMonth() - birthDate.getMonth();
-        
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
-        document.getElementById(displayId).value = age > 0 ? age : 0;
-    }
-
-    // إدارة الحقول الإلزامية للزوجة بناءً على الحالة الاجتماعية
-    function handleMaritalStatusChange() {
-        const status = document.getElementById('marital_status').value;
-        const wifeFields = ['wife_name', 'wife_id', 'wife_dob', 'is_pregnant', 'is_nursing'];
-        const wifeSection = document.getElementById('wifeSection');
-
-        if (status === 'متزوج') {
-            wifeSection.style.opacity = '1';
-            wifeSection.style.pointerEvents = 'auto';
-            wifeFields.forEach(id => {
-                document.getElementById(id).required = true;
-                // إضافة علامة النجمة بجانب العناوين برمجياً
-                const label = document.getElementById(id).previousElementSibling;
-                if(label && !label.innerText.includes('*')) label.innerText += ' *';
-            });
-        } else {
-            wifeSection.style.opacity = '0.5';
-            wifeFields.forEach(id => {
-                const field = document.getElementById(id);
-                field.required = false;
-                field.classList.remove('invalid-field');
-                const label = field.previousElementSibling;
-                if(label && label.innerText.includes('*')) label.innerText = label.innerText.replace(' *', '');
-            });
-        }
-    }
-
-    function resetForm() {
-        document.getElementById('mainForm').style.display = 'none';
-        document.getElementById('searchArea').style.display = 'block';
-        document.getElementById('mainForm').reset();
-        document.getElementById('idCheck').value = "";
-        document.getElementById('idCheck').focus();
-        document.getElementById('saveBtn').disabled = true;
-        document.getElementById('agreeCheck').checked = false;
-        document.getElementById('serial_num').innerText = "---";
-        
-        // إزالة علامات الأخطاء عند التهيئة
-        document.querySelectorAll('.invalid-field').forEach(el => el.classList.remove('invalid-field'));
-        toggleFormInputs(false);
-    }
-
-    function toggleFormInputs(disabled) {
-        const inputs = document.querySelectorAll("#mainForm input, #mainForm select, #mainForm textarea");
-        inputs.forEach(input => {
-            if (input.id !== 'head_id_display' && input.id !== 'age_main' && input.id !== 'wife_age') {
-                input.disabled = disabled;
-            }
-        });
-    }
-
-    async function fetchUserData() {
-        const id = document.getElementById('idCheck').value;
-        if(id.length < 9) return Swal.fire('تنبيه', 'يرجى إدخال رقم هوية صحيح ومكون من 9 أرقام', 'warning');
-
-        Swal.fire({ title: 'جاري استضافة بيانات الهوية...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-
-        try {
-            const res = await fetch(`${SCRIPT_URL}?action=getUser&id=${id}`);
-            const result = await res.json();
-            Swal.close();
-
-            if(result.status === "success") {
-                const d = result.data;
-                document.getElementById('serial_num').innerText = d.col1 || "مسجل";
-                document.getElementById('full_name').value = d.head_name || "";
-                document.getElementById('head_id_display').value = id;
-                document.getElementById('dob_main').value = d.head_dob || "";
-                document.getElementById('age_main').value = d.age || "";
-                document.getElementById('phone_primary').value = d.phone_primary || "";
-                document.getElementById('phone_secondary').value = d.phone_secondary || "";
-                document.getElementById('wife_name').value = d.wife_name || "";
-                document.getElementById('wife_id').value = d.wife_id || "";
-                document.getElementById('wife_age').value = d.wife_age || "";
-                document.getElementById('wife_dob').value = d.wife_dob || "";
-                document.getElementById('marital_status').value = d.marital_status || "متزوج";
-                document.getElementById('member_count').value = d.member_count || "";
-                document.getElementById('disabilities').value = d.disabilities || "";
-                document.getElementById('health_status').value = d.health_status || "";
-                document.getElementById('is_pregnant').value = d.is_pregnant || "لا";
-                document.getElementById('is_nursing').value = d.is_nursing || "لا";
-                document.getElementById('gender_main').value = d.gender || "ذكر";
-                document.getElementById('camp_name').value = d.camp_name || "";
-                document.getElementById('notes').value = d.notes || "";
-
-                handleMaritalStatusChange();
-
-                const displayName = d.head_name ? d.head_name : "المتقدم للطلب";
-                document.getElementById('declText').innerHTML = `أقر أنا <b>(${displayName})</b> صاحب الهوية رقم <b>(${id})</b> بصحة البيانات المدخلة، وأتحمل المسؤولية عن دقتها أمام إدارة مناطق الشهيد عبدالله السبع.`;
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: 'تم العثور على الملف',
-                    text: 'بياناتك مدرجة في النظام، يمكنك مراجعتها وتعديلها الآن مباشرة.',
-                    confirmButtonColor: '#059669',
-                    confirmButtonText: 'تعديل البيانات'
-                }).then(() => {
-                    document.getElementById('mainForm').style.display = 'block';
-                    document.getElementById('searchArea').style.display = 'none';
-                });
-
-            } else {
-                document.getElementById('mainForm').reset();
-                document.getElementById('serial_num').innerText = "جديد (غير مدرج)";
-                document.getElementById('head_id_display').value = id; 
-                document.getElementById('marital_status').value = "متزوج";
-                
-                handleMaritalStatusChange();
-                
-                document.getElementById('declText').innerHTML = `أقر أنا صاحب الهوية رقم <b>(${id})</b> بصحة البيانات المدخلة، وأتحمل المسؤولية القانونية الكاملة عن أي معلومة خاطئة يتم تقديمها لإدارة مناطق الشهيد عبدالله السبع.`;
-
-                Swal.fire({
-                    icon: 'info',
-                    title: 'هوية غير مدرجة مسبقاً',
-                    text: 'رقم الهوية هذا غير مسجل في الكشوفات الخاصة. اضغط موافق للبدء في تعبئة (نموذج تسجيل جديد).',
-                    confirmButtonColor: '#b45309',
-                    confirmButtonText: 'البدء بالتسجيل'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        document.getElementById('mainForm').style.display = 'block';
-                        document.getElementById('searchArea').style.display = 'none';
-                    }
-                });
-            }
-        } catch (e) { 
-            Swal.fire('خطأ', 'فشل في جلب البيانات من السجل المركزي أو معالجة الطلب', 'error'); 
-        }
-    }
-
-    async function submitUpdate(e) {
-        e.preventDefault();
-        
-        const form = document.getElementById('mainForm');
-        const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
-        let isFormValid = true;
-        let firstInvalidInput = null;
-
-        // فحص الحقول وإضافة كلاس التنبيه باللون الأحمر للحقول الفارغة
-        inputs.forEach(input => {
-            if (!input.value.trim()) {
-                input.classList.add('invalid-field');
-                isFormValid = false;
-                if (!firstInvalidInput) firstInvalidInput = input;
-            } else {
-                input.classList.remove('invalid-field');
-            }
-        });
-
-        // إضافة مستمعي أحداث للحقول لتنظيف التنبيه بمجرد الكتابة
-        inputs.forEach(input => {
-            input.oninput = () => { if(input.value.trim()) input.classList.remove('invalid-field'); };
-            input.onchange = () => { if(input.value.trim()) input.classList.remove('invalid-field'); };
-        });
-
-        if (!isFormValid) {
-            if (firstInvalidInput) firstInvalidInput.focus();
-            return Swal.fire('تنبيه هام', 'يرجى تعبئة كافة الحقول المطلوبة والمعلمة باللون الأحمر قبل الحفظ.', 'warning');
-        }
-
-        const btn = document.getElementById('saveBtn');
-        const name = document.getElementById('full_name').value;
-        
-        btn.disabled = true; 
-        btn.innerText = "جاري التوثيق...";
-        toggleFormInputs(true);
-
-        const formData = {
-            action: "updateUser", 
-            head_id: document.getElementById('head_id_display').value,
-            full_name: name,
-            dob: document.getElementById('dob_main').value,
-            age: document.getElementById('age_main').value,
-            phone: document.getElementById('phone_primary').value,
-            phone2: document.getElementById('phone_secondary').value,
-            wife_name: document.getElementById('wife_name').value,
-            wife_id: document.getElementById('wife_id').value,
-            wife_age: document.getElementById('wife_age').value,
-            wife_dob: document.getElementById('wife_dob').value,
-            status: document.getElementById('marital_status').value,
-            member_count: document.getElementById('member_count').value,
-            disabilities: document.getElementById('disabilities').value,
-            health: document.getElementById('health_status').value,
-            is_pregnant: document.getElementById('is_pregnant').value,
-            is_nursing: document.getElementById('is_nursing').value,
-            gender: document.getElementById('gender_main').value,
-            camp: document.getElementById('camp_name').value,
-            notes: document.getElementById('notes').value
-        };
-
-        try {
-            await fetch(SCRIPT_URL, { 
-                method: 'POST', 
-                body: JSON.stringify(formData) 
-            });
+    <div id="auth-portal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gradient-to-br from-slate-100 via-blue-50 to-slate-100">
+        <div class="glass-card w-full max-w-lg p-8 rounded-2xl shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 h-[4px] bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600"></div>
             
+            <div class="text-center mb-8">
+                <div class="bg-blue-600 w-16 h-16 rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-4">
+                    <i class="fa-solid fa-city text-2xl text-white"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900">بوابة منظومة مناطق كتيبة الشهيد عبدالله السبع </h2>
+                <p class="text-xs text-muted mt-2">غرفة التحكم المركزية وإدارة السجلات وقاعدة البيانات الموحدة</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 p-1.5 bg-gray-200/70 rounded-xl mb-6 border border-gray-300">
+                <button id="btn-switch-citizen" type="button" onclick="switchAuthPortal('citizen')" class="py-2.5 rounded-lg font-semibold text-sm transition-all bg-blue-600 text-white shadow">بوابة المواطن الإلكترونية</button>
+                <button id="btn-switch-admin" type="button" onclick="switchAuthPortal('admin')" class="py-2.5 rounded-lg font-semibold text-sm transition-all text-gray-600 hover:text-gray-900">بوابة الموظفين واللجان</button>
+            </div>
+
+            <form id="citizen-auth-form" onsubmit="event.preventDefault(); fetchUserData();" class="space-y-5">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-gray-700">رقم هوية رب الأسرة</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-id-card absolute right-4 top-3.5 text-gray-500"></i>
+                        <input type="number" id="idCheck" required class="w-full input-box border rounded-xl py-3 pr-11 pl-4 text-sm focus:outline-none placeholder-gray-400" placeholder="أدخل رقم الهوية المكون من 9 أرقام للتحقق أو التحديث">
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
+                    <span>التحقق الرقمي التلقائي ودخول النموذج</span>
+                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                </button>
+            </form>
+
+            <form id="admin-auth-form" onsubmit="handleAdminLogin(event);" class="space-y-5 hidden">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-gray-700">اسم المستخدم</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user-shield absolute right-4 top-3.5 text-gray-500"></i>
+                        <input type="text" id="admin-username" required class="w-full input-box border rounded-xl py-3 pr-11 pl-4 text-sm focus:outline-none placeholder-gray-400" placeholder="اسم مستخدم الحساب الميداني">
+                    </div>
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-gray-700">كلمة المرور</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-lock absolute right-4 top-3.5 text-gray-500"></i>
+                        <input type="password" id="admin-password" required class="w-full input-box border rounded-xl py-3 pr-11 pl-4 text-sm focus:outline-none placeholder-gray-400" placeholder="••••••••">
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
+                    <span>تسجيل الدخول للوحة العمليات</span>
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="citizen-registration-screen" class="w-full max-w-5xl mx-auto p-4 md:p-8 hidden z-40 my-6">
+        <div class="glass-card rounded-2xl shadow-2xl border p-6 md:p-8 space-y-8">
+            <div class="border-b pb-4 flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-bold text-blue-900 flex items-center gap-2"><i class="fa-solid fa-file-signature"></i> استمارة حصر العائلات والنازحين في مناطق الشهيد عبدالله السبع </h2>
+                    <p class="text-xs text-muted mt-1">تحديث وعرض فوري وشامل لجميع تفاصيل الأسر،  والمصابين</p>
+                </div>
+                <button type="button" onclick="resetForm()" class="bg-red-100 text-red-700 px-4 py-2 rounded-xl text-xs font-bold hover:bg-red-200 transition-all">إلغاء والعودة للخلف</button>
+            </div>
+            
+            <form id="mainForm" onsubmit="submitUpdate(event)" class="space-y-8">
+                <div class="p-4 bg-blue-50 border border-blue-200 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                        <span class="text-xs font-bold text-blue-800">رقم الملف التسلسلي الموحد الثابت:</span>
+                        <span id="serial_num" class="block mt-1 font-mono text-lg font-bold text-blue-700">---</span>
+                    </div>
+                    <div class="text-left">
+                        <span class="text-xs font-bold text-gray-500">حالة النموذج الحالية:</span>
+                        <span id="reg-status-badge" class="block text-xs font-bold text-emerald-600 mt-1">معالجة وتحديث فوري للبيانات</span>
+                    </div>
+                </div>
+
+                <div class="border-b pb-2"><h3 class="font-bold text-sm text-blue-700 flex items-center gap-2"><i class="fa-solid fa-house-user"></i> أولاً: كشف بيانات الأسرة والحالة الاجتماعية والصحية بالتفصيل</h3></div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div class="flex flex-col gap-1"><label class="text-xs font-bold text-gray-700">رقم هوية رب الأسرة</label><input type="number" id="head_id_display" readonly class="w-full input-box border rounded-xl py-2.5 px-4 text-sm outline-none bg-gray-100 font-bold"></div>
+                    <div class="flex flex-col gap-1"><label class="text-xs font-bold text-gray-700">اسم رب الأسرة رباعي</label><input type="text" id="full_name" required class="w-full input-box border rounded-xl py-2.5 px-4 text-sm outline-none"></div>
+                    <div class="flex flex-col gap-1"><label class="text-xs font-bold text-gray-700">تاريخ ميلاد رب الأسرة</label><input type="date" id="dob_main" required onchange="calculateAge(this.value, 'age_main')" class="w-full input-box border rounded-xl py-2.5 px-4 text-sm outline-none"></div>
+                    <div class="flex flex-col gap-1"><label class="text-xs font-bold text-gray-700">العمر (محسوب تلقائياً)</label><input type="number" id="age_main" readonly class="w-full input-box border rounded-xl py-2.5 px-4 text-sm outline-none bg-gray-50 font-bold text-blue-700" placeholder="0"></div>
+                    
+                    <div class="flex flex-col gap-1">
+                        <label class="text-xs font-bold text-gray-700">الحالة الصحية العامة لرب العائلة</label>
+                        <input type="text" id="health_status" placeholder="مستقرة / تحتاج رعاية" class="w-full input-box border rounded-xl py-2.5 px-4 text-sm outline-none">
+                    </div>
+                    
+                    <div class="flex flex-col gap-1"><label class="text-xs font-bold text-gray-700">الحالة الاجتماعية للأسرة</label><select id="marital_status" class="w-full input-box border rounded-xl py-2.5 px-4 text-sm outline-none"><option value="متزوج">متزوج</option><option value="أرمل">أرمل</option><option value="مطلق">مطلق</option><option value="أعزب">أعزب</option></select></div>
+                    
+                    <div class="flex flex-col gap-1"><label class="text-xs font-bold text-gray-700">اسم الزوجة الكامل رباعي</label><input type="text" id="wife_name" class="w-full input-box border rounded-xl py-2.5 px-4 text-sm outline-none"></div>
+                    <div class="flex flex-col gap-1"><label class="text-xs font-bold text-gray-700">رقم هوية الزوجة</label><input type="number" id="wife_id" class="w-full input-box border rounded-xl py-2.5 px-4 text-sm outline-none"></div>
+                    <div class="flex flex-col gap-1"><label class="text-xs font-bold text-gray-700">تاريخ ميلاد الزوجة</label><input type="date" id="wife_dob" onchange="calculateAge(this.value, 'wife_age')" class="w-full input-box border rounded-xl py-2.5 px-4 text-sm outline-none"></div>
+                    <div class="flex flex-col gap-1"><label class="text-xs font-bold text-gray-700">عمر الزوجة (تلقائي)</label><input type="number" id="wife_age" readonly class="w-full input-box border rounded-xl py-2.5 px-4 text-sm outline-none bg-gray-50 text-blue-700" placeholder="0"></div>
+                    
+                    <div class="flex flex-col gap-1"><label class="text-xs font-bold text-gray-700">هل الزوجة حامل؟</label><select id="is_pregnant" class="w-full input-box border rounded-xl py-2.5 px-4 text-sm outline-none"><option value="لا">لا</option><option value="نعم">نعم</option></select></div>
+                    <div class="flex flex-col gap-1"><label class="text-xs font-bold text-gray-700">هل الزوجة مرضع؟</label><select id="is_nursing" class="w-full input-box border rounded-xl py-2.5 px-4 text-sm outline-none"><option value="لا">لا</option><option value="نعم">نعم</option></select></div>
+                    <div class="flex flex-col gap-1"><label class="text-xs font-bold text-gray-700">جنس رب الأسرة</label><select id="gender_main" class="w-full input-box border rounded-xl py-2.5 px-4 text-sm outline-none"><option value="ذكر">ذكر</option><option value="أنثى">أنثى</option></select></div>
+                    <div class="flex flex-col gap-1"><label class="text-xs font-bold text-gray-700">إجمالي عدد أفراد العائلة الحالي</label><input type="number" id="member_count" required placeholder="يشمل الأب والأم والأبناء" class="w-full input-box border rounded-xl py-2.5 px-4 text-sm outline-none"></div>
+                    <div class="flex flex-col gap-1"><label class="text-xs font-bold text-gray-700">الأمراض المزمنة أو الإعاقات</label><input type="text" id="disabilities" placeholder="إن وجدت داخل أفراد الأسرة" class="w-full input-box border rounded-xl py-2.5 px-4 text-sm outline-none"></div>
+                </div>
+
+                <div class="border-b pb-2 pt-2"><h3 class="font-bold text-sm text-emerald-700 flex items-center gap-2"><i class="fa-solid fa-map-location-dot"></i> ثانياً: كشف تفاصيل السكن وموقع مركز النزوح الحالي</h3></div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div class="flex flex-col gap-1"><label class="text-xs font-bold text-gray-700">المنطقة / مخيم السكن والنزوح الحالي</label><input type="text" id="camp_name" required placeholder="مكان التواجد الفعلي الحالي" class="w-full input-box border rounded-xl py-2.5 px-4 text-sm outline-none"></div>
+                    <div class="flex flex-col gap-1"><label class="text-xs font-bold text-gray-700">رقم الجوال الأساسي للتواصل</label><input type="tel" id="phone_primary" required placeholder="059XXXXXXX" class="w-full input-box border rounded-xl py-2.5 px-4 text-sm outline-none"></div>
+                    <div class="flex flex-col gap-1"><label class="text-xs font-bold text-gray-700">رقم الجوال البديل أو الإضافي</label><input type="tel" id="phone_secondary" placeholder="رقم بديل (اختياري)" class="w-full input-box border rounded-xl py-2.5 px-4 text-sm outline-none"></div>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-bold text-gray-700">ملاحظات إضافية تود إرسالها للمنظومة ومسؤول مناطق كتيبة الشهيد عبدالله السبع </label>
+                    <textarea id="notes" rows="3" placeholder="اكتب هنا أي تفاصيل أو متطلبات ضرورية تخص عائلتك..." class="w-full input-box border rounded-xl py-2.5 px-4 text-sm outline-none"></textarea>
+                </div>
+
+                <div id="decBoxArea" class="bg-amber-50/70 p-5 rounded-xl border-2 border-dashed border-amber-400 space-y-3 mt-6 flex items-start gap-3">
+                    <input type="checkbox" id="agreeCheck" onchange="toggleBtn()" class="w-5 h-5 text-blue-600 border-gray-400 rounded mt-0.5 cursor-pointer">
+                    <label for="agreeCheck" id="declText" class="text-xs md:text-sm text-amber-900 font-bold leading-relaxed cursor-pointer select-none">
+                        أقر أنا المواطن (رب الأسرة)، بصحة كافة البيانات المدونة في هذا النموذج الإلكتروني في مناطق كتيبة الشهيد عبدالله السبع، وأتعهد بتحمل المسؤولية القانونية والشخصية الكاملة عنها.
+                    </label>
+                </div>
+                
+                <div class="pt-2 flex justify-end gap-3">
+                    <button type="button" onclick="resetForm()" class="bg-gray-200 text-gray-700 font-bold px-6 py-3.5 rounded-xl transition-all hover:bg-gray-300">إلغاء والعودة 🔍</button>
+                    <button type="submit" id="saveBtn" disabled class="bg-blue-600 text-white font-bold px-8 py-3.5 rounded-xl flex items-center gap-2 transition-all opacity-50 cursor-not-allowed">
+                        <span>حفظ وتوثيق البيانات النهائية</span>
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <aside id="main-sidebar" class="w-72 main-sidebar flex flex-col justify-between p-4 hidden border-l border-gray-200">
+        <div>
+            <div class="flex items-center gap-3 pb-6 border-b border-gray-200 mb-6">
+                <div class="bg-blue-600 p-2.5 rounded-xl shadow-md">
+                    <i class="fa-solid fa-city text-xl text-white"></i>
+                </div>
+                <div>
+                    <h2 class="font-bold text-md text-gray-900 leading-tight">مناطق كتيبة الشهيد عبدالله السبع</h2>
+                    <span class="text-xs text-muted">غرفة العمليات المركزية</span>
+                </div>
+            </div>
+            <nav class="space-y-1">
+                <button type="button" id="tabFamilies" onclick="switchAdminTab('families')" class="w-full sidebar-item-active flex items-center gap-3 px-4 py-3 rounded-xl text-right transition-all">
+                    <i class="fa-solid fa-house-user text-sm"></i> <span>الجدول الشامل والفرز</span>
+                </button>
+                <button type="button" id="tabEmployees" onclick="switchAdminTab('employees')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-muted text-right transition-all hover:text-blue-600">
+                    <i class="fa-solid fa-user-gear text-sm"></i> <span>الموظفين والصلاحيات</span>
+                </button>
+            </nav>
+        </div>
+        <div class="pt-4 border-t border-gray-200 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold border border-blue-200">
+                    <i class="fa-solid fa-user-shield text-xs"></i>
+                </div>
+                <div>
+                    <p id="sidebar-user-name" class="text-xs font-bold text-gray-800">جاري التحميل..</p>
+                    <p id="sidebar-user-role" class="text-[10px] text-emerald-600 font-bold">مشرف الحساب</p>
+                </div>
+            </div>
+            <button type="button" onclick="handleLogout()" class="text-gray-500 hover:text-red-500 p-2 rounded-lg transition-all" title="تسجيل الخروج">
+                <i class="fa-solid fa-power-off text-sm"></i>
+            </button>
+        </div>
+    </aside>
+
+
+    <main id="main-content-area" class="flex-1 p-6 md:p-8 overflow-y-auto max-w-7xl mx-auto w-full hidden">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pb-4 border-b border-gray-200">
+            <div>
+                <h1 id="page-title" class="text-2xl font-bold text-gray-900">لوحة الإحصائيات والمراقبة الموحدة</h1>
+                <p class="text-xs text-muted mt-1">غرفة عمليات مناطق كتيبةالشهيد عبدالله السبع - نظام الإدارة وقاعدة البيانات المركزية</p>
+            </div>
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                <button type="button" onclick="refreshAdminData()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl flex items-center gap-2 transition-all text-sm shadow-sm">
+                    <i class="fa-solid fa-rotate"></i> تحديث قاعدة البيانات
+                </button>
+            </div>
+        </header>
+
+        <div id="adminFamiliesSection" class="space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
+                    <div><p class="text-sm text-muted">إجمالي العوائل المسجلة</p><h3 id="statTotalFamilies" class="text-3xl font-bold text-gray-900 mt-2">0</h3></div>
+                    <div class="text-blue-600 bg-blue-100 p-3 rounded-xl"><i class="fa-solid fa-users text-xl"></i></div>
+                </div>
+                <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
+                    <div><p class="text-sm text-muted">المجموع العام للأفراد</p><h3 id="statTotalMembers" class="text-3xl font-bold text-gray-900 mt-2">0</h3></div>
+                    <div class="text-emerald-600 bg-emerald-100 p-3 rounded-xl"><i class="fa-solid fa-people-group text-xl"></i></div>
+                </div>
+                <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
+                    <div><p class="text-sm text-muted">عدد المخيمات والمناطق</p><h3 id="statTotalCamps" class="text-3xl font-bold text-gray-900 mt-2">0</h3></div>
+                    <div class="text-amber-600 bg-amber-100 p-3 rounded-xl"><i class="fa-solid fa-map-location-dot text-xl"></i></div>
+                </div>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-4 justify-between items-center bg-gray-100 p-4 rounded-xl border border-gray-300">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full lg:w-3/5">
+                    <input type="text" id="adminSearchInput" oninput="filterAdminData()" placeholder="ابحث بالاسم، الهوية، الهاتف، أو المعرف..." class="input-box border rounded-xl py-2.5 px-4 text-xs outline-none">
+                    <select id="adminFilterCamp" onchange="filterAdminData()" class="input-box border rounded-xl py-2.5 px-4 text-xs outline-none">
+                        <option value="">كافة المناطق والمخيمات</option>
+                    </select>
+                </div>
+                <div class="flex gap-2 w-full lg:w-auto justify-end">
+                    <button type="button" onclick="downloadExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold transition-all text-xs shadow-sm">
+                        <i class="fa-solid fa-file-excel"></i> تصدير إكسل (RTL)
+                    </button>
+                    <button type="button" onclick="addNewFamilyByAdmin()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold transition-all text-xs shadow-sm">
+                        <i class="fa-solid fa-plus"></i> إضافة عائلة جديدة
+                    </button>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-2xl overflow-hidden border border-gray-200 shadow-xl">
+                <div class="overflow-x-auto w-full">
+                    <table id="familiesTable" class="w-full text-right border-collapse relative">
+                        <thead>
+                            <tr class="table-head text-xs border-b border-gray-300">
+                                <th class="sticky-col-1">الخيارات الإدارية</th>
+                                <th class="sticky-col-2">الاسم الكامل لرب الأسرة</th>
+                                <th>رقم هوية رب الأسرة</th>
+                                <th>تاريخ الميلاد</th>
+                                <th>العمر</th>
+                                <th>الجوال الأساسي</th>
+                                <th>الجوال الإضافي</th>
+                                <th>اسم الزوجة</th>
+                                <th>هوية الزوجة</th>
+                                <th>عمر الزوجة</th>
+                                <th>تاريخ ميلاد الزوجة</th>
+                                <th>الحالة الاجتماعية</th>
+                                <th>عدد الأفراد</th>
+                                <th>الأمراض المزمنة</th>
+                                <th>الحالة الصحية</th>
+                                <th>حامل؟</th>
+                                <th>مرضع؟</th>
+                                <th>جنس رب الأسرة</th>
+                                <th>المنطقة / السكن الحالي</th>
+                                <th>الملاحظات الإضافية</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminFamiliesBody" class="text-sm divide-y divide-gray-200">
+                            <tr><td colspan="20" class="text-center p-8 text-gray-500">جاري تحميل مصفوفة البيانات ومزامنتها فورياً...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="adminEmployeesSection" class="hidden space-y-4">
+            <div class="flex justify-between items-center bg-gray-100 p-4 rounded-xl border border-gray-300">
+                <h3 class="font-bold text-sm text-gray-800">سجل المشرفين والموظفين المصرح لهم ميدانياً</h3>
+                <button type="button" onclick="showAddEmployeeModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-user-plus"></i> إضافة موظف جديد
+                </button>
+            </div>
+            <div class="glass-card rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right border-collapse">
+                        <thead>
+                            <tr class="table-head text-xs border-b border-gray-300">
+                                <th class="p-4">الرقم</th>
+                                <th>اسم الموظف الكامل</th>
+                                <th>اسم المستخدم</th>
+                                <th>الصلاحية الممنوحة</th>
+                                <th>المسؤولية الوظيفية</th>
+                                <th>حالة تصريح الحساب</th>
+                                <th>الإجراءات والتحكم</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminEmployeesBody" class="text-xs divide-y divide-gray-200">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // الرابط البرمجي للـ Web App الخاص بك من Apps Script الاستضافة المركزية مناطق كتيبةالشهيد عبدالله السبع 
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz0BNqwGU1MNQ__NaEFD63ffnoE8esiSXtIAjzPo0V2LE84ov31gUGj_DQlbxVZS6iA/exec";
+        
+        let ALL_FAMILIES = [];
+        let ALL_EMPLOYEES = [];
+        let CURRENT_ADMIN_USER = null;
+
+        // تبديل واجهة الدخول بين المواطن والموظف
+        function switchAuthPortal(portal) {
+            const btnCitizen = document.getElementById('btn-switch-citizen');
+            const btnAdmin = document.getElementById('btn-switch-admin');
+            const formCitizen = document.getElementById('citizen-auth-form');
+            const formAdmin = document.getElementById('admin-auth-form');
+
+            if (portal === 'citizen') {
+                btnCitizen.className = "py-2.5 rounded-lg font-semibold text-sm transition-all bg-blue-600 text-white shadow";
+                btnAdmin.className = "py-2.5 rounded-lg font-semibold text-sm transition-all text-gray-600 hover:text-gray-900";
+                formCitizen.classList.remove('hidden');
+                formAdmin.classList.add('hidden');
+            } else {
+                btnAdmin.className = "py-2.5 rounded-lg font-semibold text-sm transition-all bg-indigo-600 text-white shadow";
+                btnCitizen.className = "py-2.5 rounded-lg font-semibold text-sm transition-all text-gray-600 hover:text-gray-900";
+                formAdmin.classList.remove('hidden');
+                formCitizen.classList.add('hidden');
+            }
+        }
+
+        // تفعيل أو تعطيل زر الحفظ حسب حالة الـ Checkbox الخاص بالإقرار
+        function toggleBtn() {
+            const saveBtn = document.getElementById('saveBtn');
+            const isChecked = document.getElementById('agreeCheck').checked;
+            saveBtn.disabled = !isChecked;
+            if(isChecked) {
+                saveBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                saveBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        // حساب العمر الحقيقي تلقائياً من تاريخ الميلاد
+        function calculateAge(dob, displayId) {
+            if (!dob) return;
+            const diff = new Date().getFullYear() - new Date(dob).getFullYear();
+            document.getElementById(displayId).value = diff > 0 ? diff : 0;
+        }
+
+        // إعادة ضبط النموذج والرجوع إلى البوابة الرئيسية
+        function resetForm() {
+            document.getElementById('citizen-registration-screen').classList.add('hidden');
+            document.getElementById('mainForm').reset();
+            document.getElementById('saveBtn').disabled = true;
+            document.getElementById('saveBtn').classList.add('opacity-50', 'cursor-not-allowed');
+            document.getElementById('agreeCheck').checked = false;
+            document.getElementById('serial_num').innerText = "---";
+            document.getElementById('head_id_display').readOnly = true;
+            document.getElementById('decBoxArea').style.display = 'flex';
+            
+            if(CURRENT_ADMIN_USER) {
+                document.getElementById('main-content-area').classList.remove('hidden');
+                document.getElementById('main-sidebar').classList.remove('hidden');
+                document.getElementById('auth-portal').classList.add('hidden');
+            } else {
+                document.getElementById('auth-portal').classList.remove('hidden');
+                document.getElementById('main-content-area').classList.add('hidden');
+                document.getElementById('main-sidebar').classList.add('hidden');
+                document.getElementById('idCheck').value = "";
+            }
+        }
+
+        // جلب واستيراد بيانات المواطن برقم الهوية
+        async function fetchUserData() {
+            const id = document.getElementById('idCheck').value;
+            if(id.length < 9) return Swal.fire('تنبيه', 'يرجى إدخال رقم هوية صحيح مكون من 9 أرقام', 'warning');
+            
+            Swal.fire({ title: 'جاري استيراد البيانات وملف العائلة...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=getUser&id=${id}`);
+                const result = await res.json();
+                Swal.close();
+                
+                // تحديث نص الإقرار القانوني والتعهد ديناميكياً برقم الهوية والاسم المتوفر
+                const citizenName = result.status === "success" && result.data.head_name ? result.data.head_name : "(جديد قيد السجل)";
+                document.getElementById('declText').innerHTML = `أقر أنا المواطن <span class="text-blue-700 font-black underline">${citizenName}</span> صاحب الهوية المذكورة رقم <span class="text-blue-700 font-black underline">${id}</span> بصفتي رباً للأسرة، بصحة كافة البيانات والملحقات المدونة في هذا النموذج الإلكتروني امام مسؤول مناطق كتيبةالشهيد عبدالله السبع - بيت حانون، وأتعهد بتحمل المسؤولية الكاملة عنها.`;
+
+                if(result.status === "success") {
+                    const d = result.data;
+                    document.getElementById('serial_num').innerText = d.col1 || "سجل مدرج";
+                    document.getElementById('full_name').value = d.head_name || "";
+                    document.getElementById('head_id_display').value = id;
+                    document.getElementById('dob_main').value = d.head_dob || "";
+                    document.getElementById('age_main').value = d.age || "";
+                    document.getElementById('phone_primary').value = d.phone_primary || "";
+                    document.getElementById('phone_secondary').value = d.phone_secondary || "";
+                    document.getElementById('wife_name').value = d.wife_name || "";
+                    document.getElementById('wife_id').value = d.wife_id || "";
+                    document.getElementById('wife_age').value = d.wife_age || "";
+                    document.getElementById('wife_dob').value = d.wife_dob || "";
+                    document.getElementById('marital_status').value = d.marital_status || "متزوج";
+                    document.getElementById('member_count').value = d.member_count || "";
+                    document.getElementById('disabilities').value = d.disabilities || "";
+                    document.getElementById('health_status').value = d.health_status || "";
+                    document.getElementById('is_pregnant').value = d.is_pregnant || "لا";
+                    document.getElementById('is_nursing').value = d.is_nursing || "لا";
+                    document.getElementById('gender_main').value = d.gender || "ذكر";
+                    document.getElementById('camp_name').value = d.camp_name || "";
+                    document.getElementById('notes').value = d.notes || "";
+                    
+                    document.getElementById('auth-portal').classList.add('hidden');
+                    document.getElementById('citizen-registration-screen').classList.remove('hidden');
+                } else {
+                    document.getElementById('mainForm').reset();
+                    document.getElementById('serial_num').innerText = "جديد (غير مدرج)";
+                    document.getElementById('head_id_display').value = id;
+                    Swal.fire('ملف جديد', 'رقم الهوية غير مدرج مسبقاً، تم فتح سجل إضافة ملف عائلي جديد في المنظومة.', 'info').then(() => {
+                        document.getElementById('auth-portal').classList.add('hidden');
+                        document.getElementById('citizen-registration-screen').classList.remove('hidden');
+                    });
+                }
+            } catch (e) {
+                Swal.fire('خطأ', 'حدث خلل في جلب البيانات من المخدم الرقمي المركزي', 'error');
+            }
+        }
+
+        // إرسال وتحديث البيانات لقاعدة البيانات
+        async function submitUpdate(e) {
+            e.preventDefault();
+            const btn = document.getElementById('saveBtn');
+            const name = document.getElementById('full_name').value;
+            
+            btn.disabled = true; 
+            btn.innerText = "جاري الحفظ والتزامن...";
+            
+            const formData = {
+                action: CURRENT_ADMIN_USER ? "adminSaveFamily" : "updateUser",
+                head_id: document.getElementById('head_id_display').value,
+                full_name: name,
+                dob: document.getElementById('dob_main').value,
+                age: document.getElementById('age_main').value,
+                phone: document.getElementById('phone_primary').value,
+                phone2: document.getElementById('phone_secondary').value,
+                wife_name: document.getElementById('wife_name').value,
+                wife_id: document.getElementById('wife_id').value,
+                wife_age: document.getElementById('wife_age').value,
+                wife_dob: document.getElementById('wife_dob').value,
+                status: document.getElementById('marital_status').value,
+                member_count: document.getElementById('member_count').value,
+                disabilities: document.getElementById('disabilities').value,
+                health: document.getElementById('health_status').value,
+                is_pregnant: document.getElementById('is_pregnant').value,
+                is_nursing: document.getElementById('is_nursing').value,
+                gender: document.getElementById('gender_main').value,
+                camp: document.getElementById('camp_name').value,
+                notes: document.getElementById('notes').value
+            };
+
+            try {
+                await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(formData) });
+                Swal.fire('تمت العملية بنجاح', `تم توثيق وحفظ كشف بيانات العائلة (${name}) بنجاح داخل بوابة منظومة مناطق كتيبة الشهيد عبدالله السبع بيت حانون.`, 'success').then(() => {
+                    resetForm();
+                    if(CURRENT_ADMIN_USER) refreshAdminData();
+                });
+            } catch (e) {
+                Swal.fire('خطأ السيرفر', 'تعذر معالجة وإرسال البيانات السحابية حالياً', 'error');
+                btn.disabled = false; 
+                btn.innerText = "حفظ وتوثيق البيانات النهائية";
+            }
+        }
+
+        // تسجيل دخول المشرف أو المدير
+        async function handleAdminLogin(e) {
+            e.preventDefault();
+            const userInp = document.getElementById('admin-username').value;
+            const passInp = document.getElementById('admin-password').value;
+
+            Swal.fire({ title: 'جاري المصادقة والأمان الرقمي...', didOpen: () => Swal.showLoading() });
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "login", username: userInp, password: passInp }) });
+                const data = await res.json();
+                Swal.close();
+                
+                if (data.status === "success") {
+                    CURRENT_ADMIN_USER = data.user;
+                    Swal.fire('مرحباً بك', `أهلاً ومرحباً بك يا ${data.user.name} في لوحة العمليات المركزية.`, 'success');
+                    
+                    // تحديث معلومات المدير النشط بداخل الـ Sidebar فوراً بعد التحقق
+                    document.getElementById('sidebar-user-name').innerText = data.user.name;
+                    document.getElementById('sidebar-user-role').innerText = data.user.role || "مدير النظام";
+
+                    showAdminDashboard();
+                } else {
+                    Swal.fire('خطأ في المطابقة', data.message, 'error');
+                }
+            } catch(e) { 
+                Swal.fire('خطأ الاتصال', 'تعذر الاتصال بخوادم قاعدة البيانات المركزية حالياً', 'error'); 
+            }
+        }
+
+        // إظهار لوحة التحكم والعمليات للمشرف
+        function showAdminDashboard() {
+            document.getElementById('auth-portal').classList.add('hidden');
+            document.getElementById('citizen-registration-screen').classList.add('hidden');
+            document.getElementById('main-sidebar').classList.remove('hidden');
+            document.getElementById('main-content-area').classList.remove('hidden');
+            refreshAdminData();
+        }
+
+        // خروج المشرف وإعادة تهيئة النظام لقفل الحسابات
+        function handleLogout() {
+            CURRENT_ADMIN_USER = null;
+            document.getElementById('admin-username').value = "";
+            document.getElementById('admin-password').value = "";
+            document.getElementById('main-sidebar').classList.add('hidden');
+            document.getElementById('main-content-area').classList.add('hidden');
+            document.getElementById('auth-portal').classList.remove('hidden');
+            resetForm();
+        }
+
+        // التنقل بين التبويبات بداخل لوحة المشرفين
+        function switchAdminTab(tab) {
+            const tabFamilies = document.getElementById('tabFamilies');
+            const tabEmployees = document.getElementById('tabEmployees');
+            const secFamilies = document.getElementById('adminFamiliesSection');
+            const secEmployees = document.getElementById('adminEmployeesSection');
+
+            if (tab === 'families') {
+                tabFamilies.className = "w-full sidebar-item-active flex items-center gap-3 px-4 py-3 rounded-xl text-right transition-all";
+                tabEmployees.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-muted text-right transition-all hover:text-blue-600";
+                secFamilies.classList.remove('hidden');
+                secEmployees.classList.add('hidden');
+                document.getElementById('page-title').innerText = "لوحة الإحصائيات والمراقبة الموحدة";
+            } else {
+                tabEmployees.className = "w-full sidebar-item-active flex items-center gap-3 px-4 py-3 rounded-xl text-right transition-all";
+                tabFamilies.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-muted text-right transition-all hover:text-blue-600";
+                secEmployees.classList.remove('hidden');
+                secFamilies.classList.add('hidden');
+                document.getElementById('page-title').innerText = "إدارة شؤون وصلاحيات الموظفين";
+            }
+        }
+
+        // تحديث وجلب كامل مصفوفة البيانات للمدير
+        async function refreshAdminData() {
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=adminFetchAll`);
+                const result = await res.json();
+                if (result.status === "success") {
+                    ALL_FAMILIES = result.families;
+                    ALL_EMPLOYEES = result.employees;
+                    renderStats();
+                    renderFamiliesTable(ALL_FAMILIES);
+                    renderEmployeesTable(ALL_EMPLOYEES);
+                    populateCampFilter();
+                }
+            } catch (e) { 
+                console.error("تعذر تحديث المصفوفة المركزية لقاعدة البيانات", e); 
+            }
+        }
+
+        // عرض الإحصائيات والعدادات الإجمالية للكروت الميدانية
+        function renderStats() {
+            document.getElementById('statTotalFamilies').innerText = ALL_FAMILIES.length;
+            let totalMembers = 0; 
+            let camps = new Set();
+            ALL_FAMILIES.forEach(f => {
+                totalMembers += parseInt(f[11] || 0);
+                if (f[17]) camps.add(f[17].toString().trim());
+            });
+            document.getElementById('statTotalMembers').innerText = totalMembers;
+            document.getElementById('statTotalCamps').innerText = camps.size;
+        }
+
+        // تعبئة وتحديث فلتر المناطق بداخل لوحة البيانات الإدارية
+        function populateCampFilter() {
+            const filterSelect = document.getElementById('adminFilterCamp');
+            const savedValue = filterSelect.value;
+            filterSelect.innerHTML = '<option value="">كافة المناطق والمخيمات</option>';
+            let camps = new Set();
+            ALL_FAMILIES.forEach(f => { if (f[17]) camps.add(f[17].toString().trim()); });
+            camps.forEach(c => { filterSelect.innerHTML += `<option value="${c}">${c}</option>`; });
+            filterSelect.value = savedValue;
+        }
+
+        // بناء وعرض جدول الأسر والنازحين مع ميزة الأعمدة الثابتة والبحبحة الفائقة
+        function renderFamiliesTable(dataRows) {
+            const tbody = document.getElementById('adminFamiliesBody');
+            tbody.innerHTML = '';
+            if(dataRows.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="20" style="text-align:center;" class="p-6 text-gray-500">لا توجد سجلات تطابق الفرز والبحث الحالي المجرى.</td></tr>';
+                return;
+            }
+            dataRows.forEach(row => {
+                const nameOfHead = row[0] ? row[0].toString().trim() : '';
+                const isFerasAccount = nameOfHead.includes("فراس") || nameOfHead.toLowerCase().includes("feras");
+                
+                const deleteButtonHtml = isFerasAccount 
+                    ? `<span class="badge badge-danger">محمي 🔒</span>`
+                    : `<button type="button" class="action-btn btn-del" onclick="deleteFamilyByAdmin('${row[1]}')">حذف 🗑️</button>`;
+
+                const formatExcelDate = (val) => {
+                    if(!val) return '---';
+                    if(typeof val === 'string' && val.includes('T')) return val.split('T')[0];
+                    return val.toString().substring(0, 10);
+                };
+
+                tbody.innerHTML += `
+                    <tr class="table-row">
+                        <td class="sticky-col-1">
+                            <button type="button" class="action-btn btn-edit" onclick="editFamilyByAdmin('${row[1]}')">تعديل 📝</button>
+                            ${deleteButtonHtml}
+                        </td>
+                        <td class="sticky-col-2 font-bold text-gray-900 text-sm">
+                            ${row[0] || '---'}
+                        </td>
+                        <td>${row[1] || '---'}</td>
+                        <td>${formatExcelDate(row[2])}</td>
+                        <td><b class="text-blue-600">${row[3] || '0'} عام</b></td>
+                        <td>${row[4] || '---'}</td>
+                        <td>${row[5] || '---'}</td>
+                        <td>${row[6] || '---'}</td>
+                        <td>${row[7] || '---'}</td>
+                        <td>${row[8] || '0'}</td>
+                        <td>${formatExcelDate(row[9])}</td>
+                        <td>${row[10] || '---'}</td>
+                        <td><span class="badge badge-success">${row[11] || 0} أفراد</span></td>
+                        <td class="text-red-600 font-semibold">${row[12] || 'لا يوجد'}</td>
+                        <td>${row[13] || 'جيدة'}</td>
+                        <td>${row[14] || 'لا'}</td>
+                        <td>${row[15] || 'لا'}</td>
+                        <td>${row[16] || 'ذكر'}</td>
+                        <td class="text-emerald-700 font-bold">${row[17] || '---'}</td>
+                        <td class="max-w-xs truncate" title="${row[18] || ''}">${row[18] || '---'}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // تصفية وفرز البيانات بشكل حي وفوري
+        function filterAdminData() {
+            const searchVal = document.getElementById('adminSearchInput').value.toLowerCase().trim();
+            const campVal = document.getElementById('adminFilterCamp').value;
+            
+            const filtered = ALL_FAMILIES.filter(f => {
+                const matchesSearch = !searchVal || 
+                                      (f[0] && f[0].toString().toLowerCase().includes(searchVal)) ||
+                                      (f[1] && f[1].toString().includes(searchVal)) ||
+                                      (f[4] && f[4].toString().includes(searchVal));
+                const matchesCamp = !campVal || (f[17] && f[17].toString().trim() === campVal.trim());
+                return matchesSearch && matchesCamp;
+            });
+            renderFamiliesTable(filtered);
+        }
+
+        // إضافة سجل عائلة جديد بواسطة المشرف
+        function addNewFamilyByAdmin() {
+            document.getElementById('mainForm').reset();
+            document.getElementById('serial_num').innerText = "إضافة يدوية بواسطة المشرف ➕";
+            document.getElementById('head_id_display').readOnly = false;
+            document.getElementById('saveBtn').disabled = false;
+            document.getElementById('saveBtn').classList.remove('opacity-50', 'cursor-not-allowed');
+            document.getElementById('decBoxArea').style.display = 'none';
+            document.getElementById('declText').innerHTML = "تم تجاوز التعهد؛ يتم التحرير والتثبيت بواسطة موظف النظام والمشرف المعني.";
+
+            document.getElementById('main-content-area').classList.add('hidden');
+            document.getElementById('main-sidebar').classList.add('hidden');
+            document.getElementById('citizen-registration-screen').classList.remove('hidden');
+            document.getElementById('head_id_display').focus();
+        }
+
+        // تعديل فوري لبيانات سجل محدد
+        function editFamilyByAdmin(id) {
+            document.getElementById('idCheck').value = id;
+            fetchUserData().then(() => {
+                document.getElementById('saveBtn').disabled = false;
+                document.getElementById('saveBtn').classList.remove('opacity-50', 'cursor-not-allowed');
+                document.getElementById('decBoxArea').style.display = 'none';
+            });
+        }
+
+        // حذف عائلة معينة من النظام
+        function deleteFamilyByAdmin(id) {
             Swal.fire({
-                icon: 'success',
-                title: 'تم الحفظ والتوثيق',
-                html: `الأخ الفاضل <b>${name}</b><br> تم حفظ وتحديث بيانات ملفك بنجاح في مناطق الشهيد عبدالله السبع.`,
-                confirmButtonText: 'إغلاق',
-                confirmButtonColor: '#059669'
-            }).then(() => resetForm());
-            
-        } catch (e) { 
-            Swal.fire('خطأ', 'حدثت مشكلة تقنية أثناء الحفظ، يرجى التحقق من الاتصال', 'error');
-            btn.disabled = false; 
-            btn.innerText = "توثيق وحفظ البيانات النهائية";
-            toggleFormInputs(false);
+                title: 'تأكيد حذف السجل العائلي؟',
+                text: `هل أنت متأكد من مسح السجل صاحب الهوية (${id})؟ لا يمكن التراجع عن هذا الإجراء!`,
+                icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', confirmButtonText: 'تأكيد المسح النهائي', cancelButtonText: 'إلغاء'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({ title: 'جاري حذف السجل المختار...', didOpen: () => Swal.showLoading() });
+                    try {
+                        const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "adminDeleteFamily", head_id: id }) });
+                        const resData = await res.json();
+                        Swal.close();
+                        if(resData.status === "success") {
+                            Swal.fire('تم المسح', resData.message, 'success');
+                            refreshAdminData();
+                        } else { Swal.fire('خطأ الحماية', resData.message, 'error'); }
+                    } catch(e) { Swal.fire('خطأ التزامن', 'فشل الاتصال البرمجي مع الشيت المركزي للمنظومة', 'error'); }
+                }
+            });
         }
-    }
-</script>
+
+        // بناء وتحديث سجل بيانات الموظفين
+        function renderEmployeesTable(empRows) {
+            const tbody = document.getElementById('adminEmployeesBody'); 
+            tbody.innerHTML = '';
+            empRows.forEach(row => {
+                const statusBadge = row[6] === 'نشط' ? '<span class="badge badge-success">نشط ومصرح</span>' : '<span class="badge badge-danger">معطل ومحجوب</span>';
+                tbody.innerHTML += `
+                    <tr class="table-row">
+                        <td class="p-3">${row[0]}</td>
+                        <td><b>${row[1]}</b></td>
+                        <td>${row[2]}</td>
+                        <td>${row[4]}</td>
+                        <td>${row[5] || '---'}</td>
+                        <td>${statusBadge}</td>
+                        <td><button type="button" class="action-btn btn-edit" onclick="editEmployeeByAdmin('${row[2]}', '${row[1]}', '${row[3]}', '${row[4]}', '${row[5]}', '${row[6]}')">تعديل الصلاحية ⚙️</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function showAddEmployeeModal() { openEmployeeForm('', '', '', 'موظف', '', 'نشط', false); }
+        function editEmployeeByAdmin(username, name, pass, role, title, status) { openEmployeeForm(username, name, pass, role, title, status, true); }
+
+        // فتح نموذج إدارة بيانات المشرفين والموظفين
+        function openEmployeeForm(username, name, pass, role, title, status, isEdit) {
+            Swal.fire({
+                title: isEdit ? '⚙️ تعديل وتحديث بيانات الموظف والصلاحية' : '👤 إضافة مستخدم جديد للنظام',
+                html: `
+                    <input type="text" id="emp_name" class="swal2-input text-xs" placeholder="اسم الموظف الكامل" value="${name}">
+                    <input type="text" id="emp_username" class="swal2-input text-xs" placeholder="اسم المستخدم الفريد" value="${username}" ${isEdit ? 'readonly' : ''}>
+                    <input type="password" id="emp_password" class="swal2-input text-xs" placeholder="كلمة المرور الجديدة" value="${pass}">
+                    <input type="text" id="emp_title" class="swal2-input text-xs" placeholder="الوظيفة والمسؤولية الميدانية" value="${title}">
+                    <div style="margin-top:15px; display:flex; justify-content:space-around;" class="text-xs font-bold text-gray-700">
+                        <div><label class="block mb-1">صلاحية لوحة التحكم</label><select id="emp_role" class="border p-2 rounded-lg"><option value="موظف" ${role==='موظف'?'selected':''}>موظف لوحة</option><option value="مدير نظام" ${role==='مدير نظام'?'selected':''}>مدير نظام</option></select></div>
+                        <div><label class="block mb-1">حالة تصريح الحساب</label><select id="emp_status" class="border p-2 rounded-lg"><option value="نشط" ${status==='نشط'?'selected':''}>نشط ومصرح</option><option value="معطل" ${status==='معطل'?'selected':''}>معطل ومحجوب</option></select></div>
+                    </div>
+                `,
+                confirmButtonText: 'حفظ الحساب والتغيير', showCancelButton: true, cancelButtonText: 'إلغاء', confirmButtonColor: '#2563eb',
+                preConfirm: () => {
+                    return {
+                        action: "adminSaveEmployee", emp_name: document.getElementById('emp_name').value,
+                        emp_username: document.getElementById('emp_username').value, emp_password: document.getElementById('emp_password').value,
+                        emp_title: document.getElementById('emp_title').value, emp_role: document.getElementById('emp_role').value, emp_status: document.getElementById('emp_status').value
+                    }
+                }
+            }).then(async (result) => {
+                if(result.isConfirmed) {
+                    if(!result.value.emp_name || !result.value.emp_username || !result.value.emp_password) return Swal.fire('تنبيه', 'يرجى إكمال الحقول الإلزامية لتشغيل الحساب', 'warning');
+                    Swal.fire({ title: 'جاري حفظ بيانات الموظف والمزامنة...', didOpen: () => Swal.showLoading() });
+                    try {
+                        const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(result.value) });
+                        const data = await res.json(); 
+                        Swal.close();
+                        Swal.fire('نجاح العملية', data.message, 'success');
+                        refreshAdminData();
+                    } catch(e) { Swal.fire('خطأ الحفظ', 'تعذر إرسال التحديثات لمصفوفة الحسابات المركزية الحالية', 'error'); }
+                }
+            });
+        }
+
+        // استخراج وتنزيل ملفات كشوفات الإكسل بشكل منسق يدعم اللغة العربية
+        function downloadExcel() {
+            if(ALL_FAMILIES.length === 0) return Swal.fire('تنبيه', 'لا توجد بيانات حالية في الجدول لتصديرها', 'warning');
+            const searchVal = document.getElementById('adminSearchInput').value.toLowerCase().trim();
+            const campVal = document.getElementById('adminFilterCamp').value;
+            
+            const filtered = ALL_FAMILIES.filter(f => {
+                const matchesSearch = !searchVal || 
+                                      (f[0] && f[0].toString().toLowerCase().includes(searchVal)) ||
+                                      (f[1] && f[1].toString().includes(searchVal)) ||
+                                      (f[4] && f[4].toString().includes(searchVal));
+                const matchesCamp = !campVal || (f[17] && f[17].toString().trim() === campVal.trim());
+                return matchesSearch && matchesCamp;
+            });
+
+            const excelData = [
+                ["كشف البيانات الشامل والكامل للعوائل والنازحين - منظومة مدينة بيت حانون الرقمية الموحدة"],
+                [],
+                ["الرقم/الاسم الأول", "رقم هوية رب الأسرة", "تاريخ الميلاد", "العمر", "رقم الجوال الأساسي", "رقم الجوال الإضافي", "اسم الزوجة", "رقم هوية الزوجة", "عمر الزوجة", "تاريخ ميلاد الزوجة", "الحالة الاجتماعية", "عدد الأفراد", "الأمراض المزمنة", "الحالة الصحية", "حامل؟", "مرضع؟", "الجنس", "مركز ومخيم السكن الحالي", "ملاحظات الإدارة"]
+            ];
+
+            filtered.forEach(row => {
+                excelData.push([
+                    row[0]||'', row[1]||'', row[2]||'', row[3]||'', row[4]||'', row[5]||'',
+                    row[6]||'', row[7]||'', row[8]||'', row[9]||'', row[10]||'', row[11]||0,
+                    row[12]||'', row[13]||'', row[14]||'', row[15]||'', row[16]||'', row[17]||'', row[18]||''
+                ]);
+            });
+
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(excelData);
+            ws['!dir'] = "rtl"; // ضبط الاتجاه يدعم العرض من اليمين إلى اليسار
+            XLSX.utils.book_append_sheet(wb, ws, "كشف العوائل والنازحين");
+            
+            let fileName = "كشف_بيت_حانون_العام.xlsx";
+            if(campVal) fileName = `كشف_نازحي_${campVal.replace(/ /g, "_")}.xlsx`;
+            
+            XLSX.writeFile(wb, fileName);
+            Swal.fire('تم التحميل والمزامنة', `تم تصدير وحفظ كشف الجداول بـملف Excel يحتوي على (${filtered.length}) سجل عائلي موثق بنجاح تام.`, 'success');
+        }
+    </script>
 </body>
 </html>
