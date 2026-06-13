@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة مناطق الشهيد عبدالله السبع | م. فراس سحويل</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root { 
+            --primary: #0f172a; --gold: #b45309; --accent: #3b82f6; 
+            --bg: #f8fafc; --white: #ffffff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body { background: var(--bg); color: var(--primary); line-height: 1.6; }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary) 0%, #1e293b 100%);
+            color: white; padding: 50px 20px; text-align: center;
+            border-bottom: 5px solid var(--gold); border-radius: 0 0 40px 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .hero-section h1 { font-size: 2.2rem; font-weight: 900; margin-bottom: 10px; }
+
+        .container { max-width: 950px; margin: -35px auto 50px; padding: 0 15px; }
+
+        .search-card {
+            background: white; padding: 35px; border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05); text-align: center;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .search-group { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+        .search-group input { 
+            flex: 1; min-width: 250px; padding: 15px; border-radius: 15px; border: 2.5px solid #e2e8f0; 
+            font-size: 1.2rem; font-weight: 700; text-align: center; transition: 0.3s;
+        }
+        .search-group input:focus { border-color: var(--accent); outline: none; }
+        .btn-search { 
+            background: var(--gold); color: white; padding: 15px 45px; border: none; 
+            border-radius: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 1.1rem;
+        }
+        .btn-search:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(180, 83, 9, 0.3); }
+
+        #mainForm { display: none; margin-top: 30px; animation: fadeInUp 0.7s ease; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section-card { 
+            background: white; padding: 30px; border-radius: 25px; margin-bottom: 25px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.02); border: 1px solid #f1f5f9;
+        }
+        .section-title { 
+            font-weight: 900; color: var(--primary); margin-bottom: 20px; font-size: 1.3rem;
+            border-right: 6px solid var(--gold); padding-right: 15px; display: flex; align-items: center; gap: 10px;
+        }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+        label { display: block; font-size: 0.9rem; font-weight: 800; color: #64748b; margin-bottom: 8px; }
+        input, select, textarea { 
+            width: 100%; padding: 13px; border: 1.5px solid #e2e8f0; border-radius: 12px; 
+            font-size: 1rem; background: #fcfcfc; transition: 0.3s; color: #1e293b;
+        }
+        input:focus { border-color: var(--gold); outline: none; background: #fff; }
+        input[readonly] { background: #f8fafc; border-style: dashed; color: #64748b; }
+
+        .serial-badge {
+            background: #1e293b; color: #fbbf24; padding: 8px 25px;
+            border-radius: 12px; font-weight: 900; margin-bottom: 20px; display: inline-block;
+            font-size: 1.1rem; border: 1px solid #334155;
+        }
+
+        .declaration-box {
+            background: #fffbeb; border: 2px dashed #f59e0b; padding: 25px;
+            border-radius: 20px; margin-top: 25px; display: flex; align-items: flex-start; gap: 15px;
+        }
+        .declaration-box input[type="checkbox"] { width: 28px; height: 28px; cursor: pointer; margin-top: 5px; }
+        .declaration-text { font-size: 1rem; font-weight: 700; color: #92400e; line-height: 1.7; }
+
+        .buttons-wrapper { display: flex; gap: 15px; margin-top: 25px; }
+        .btn-save { 
+            flex: 2; padding: 22px; background: linear-gradient(to left, #059669, #10b981);
+            color: white; border: none; border-radius: 20px; font-size: 1.4rem; font-weight: 900;
+            cursor: pointer; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2); transition: 0.3s;
+        }
+        .btn-save:disabled { background: #cbd5e1; cursor: not-allowed; box-shadow: none; transform: none; }
+        .btn-new-search {
+            flex: 1; padding: 22px; background: #f1f5f9; color: #475569; border: 2px solid #e2e8f0;
+            border-radius: 20px; font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: 0.3s;
+        }
+        .btn-new-search:hover { background: #e2e8f0; }
+
+        footer { margin-top: 70px; padding: 40px; text-align: center; background: #fff; border-top: 1px solid #e2e8f0; }
+        .designer-frame {
+            display: inline-block; padding: 15px 45px; border-radius: 25px;
+            border: 2.5px solid var(--gold); background: #ffffff;
+            box-shadow: 0 4px 15px rgba(180, 83, 9, 0.1);
+        }
+        .designer-frame h4 { color: var(--primary); font-weight: 900; font-size: 1.2rem; margin-bottom: 5px; }
+        .designer-frame p { color: var(--gold); font-weight: 800; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+
+<div class="hero-section">
+    <h1>بوابة مناطق الشهيد عبدالله السبع </h1>
+    <p>النظام الذكي لتحديث واستضافة بيانات النازحين - 2026</p>
+    <p>تصميم وتنفيذ / م. فراس محمد سحويل  - 2026</p>
+</div>
+
+<div class="container">
+    <div class="search-card" id="searchArea">
+        <h3 style="color: var(--primary); margin-bottom: 10px; font-weight: 900;">استعلام عن الملف برقم الهوية</h3>
+        <div class="search-group">
+            <input type="number" id="idCheck" placeholder="أدخل رقم هوية رب الأسرة">
+            <button class="btn-search" onclick="fetchUserData()">فتح الملف</button>
+        </div>
+    </div>
+
+    <form id="mainForm" onsubmit="submitUpdate(event)">
+        <div style="text-align: center;">
+            <div class="serial-badge">الرقم التسلسلي في الكشف: <span id="serial_num">---</span></div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title">👤 بيانات رب الأسرة الأساسية</div>
+            <div class="grid">
+                <div class="form-group"><label>اسم رب الأسرة رباعي</label><input type="text" id="full_name" required placeholder="أدخل الاسم كما في الهوية"></div>
+                <div class="form-group"><label>رقم الهوية</label><input type="number" id="head_id_display" readonly></div>
+                <div class="form-group"><label>تاريخ الميلاد</label><input type="date" id="dob_main" onchange="calculateAge(this.value, 'age_main')"></div>
+                <div class="form-group"><label>العمر (يُحسب تلقائياً)</label><input type="number" id="age_main" readonly placeholder="0"></div>
+                <div class="form-group"><label>رقم الجوال الأساسي</label><input type="tel" id="phone_primary" required placeholder="059XXXXXXX"></div>
+                <div class="form-group"><label>رقم الجوال الاحتياطي</label><input type="tel" id="phone_secondary" placeholder="اختياري"></div>
+                <div class="form-group"><label>جنس رب الأسرة</label><select id="gender_main"><option value="ذكر">ذكر</option><option value="أنثى">أنثى</option></select></div>
+                <div class="form-group"><label>الحالة الاجتماعية</label><select id="marital_status"><option value="متزوج">متزوج</option><option value="أرمل">أرمل</option><option value="مطلق">مطلق</option><option value="أعزب">أعزب</option></select></div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title">👩 سجل بيانات الزوجة</div>
+            <div class="grid">
+                <div class="form-group"><label>اسم الزوجة رباعي</label><input type="text" id="wife_name"></div>
+                <div class="form-group"><label>رقم هوية الزوجة</label><input type="number" id="wife_id"></div>
+                <div class="form-group"><label>تاريخ ميلاد الزوجة</label><input type="date" id="wife_dob" onchange="calculateAge(this.value, 'wife_age')"></div>
+                <div class="form-group"><label>عمر الزوجة</label><input type="number" id="wife_age" readonly placeholder="0"></div>
+                <div class="form-group"><label>هل الزوجة حامل؟</label><select id="is_pregnant"><option value="لا">لا</option><option value="نعم">نعم</option></select></div>
+                <div class="form-group"><label>هل الزوجة مرضع؟</label><select id="is_nursing"><option value="لا">لا</option><option value="نعم">نعم</option></select></div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title">🏠 مكان النزوح والحالة العامة</div>
+            <div class="grid">
+                <div class="form-group"><label>إجمالي عدد أفراد الأسرة</label><input type="number" id="member_count" placeholder="بما فيهم الأب والأم"></div>
+                <div class="form-group"><label>اسم المخيم / مكان السكن الحالي</label><input type="text" id="camp_name" placeholder="مثال: مخيم جباليا"></div>
+                <div class="form-group"><label>امراض مزمنة (إن وجد)</label><input type="text" id="disabilities" placeholder="لا يوجد"></div>
+                <div class="form-group"><label>الحالة الصحية العامة</label><input type="text" id="health_status" placeholder="جيدة / أمراض مزمنة"></div>
+            </div>
+            <div class="form-group" style="margin-top:20px;">
+                <label>ملاحظات إضافية تود ذكرها للإدارة</label>
+                <textarea id="notes" rows="3" placeholder="أدخل أي ملاحظات هنا..."></textarea>
+            </div>
+        </div>
+
+        <div class="declaration-box">
+            <input type="checkbox" id="agreeCheck" onchange="toggleBtn()">
+            <div class="declaration-text" id="declText">
+                أقر أنا الموضح اسمي أعلاه بصحة كافة البيانات المدخلة، وأتحمل المسؤولية القانونية الكاملة عن أي معلومة خاطئة يتم تقديمها لإدارة مدرسة الكرمل.
+            </div>
+        </div>
+
+        <div class="buttons-wrapper">
+            <button type="submit" class="btn-save" id="saveBtn" disabled>توثيق وحفظ البيانات النهائية</button>
+            <button type="button" class="btn-new-search" onclick="resetForm()">بحث جديد 🔍</button>
+        </div>
+    </form>
+</div>
+
+<footer>
+    <div class="designer-frame">
+        <h4>تصميم وتطوير م. فراس سحويل "الركن"</h4>
+        <p>جوال: 0594344675</p>
+    </div>
+</footer>
+
+<script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzt2pH3fyMby5c6RZy5oNiBfDLAeUNpt8enCLz7EESM5U8O0fyZ4kP959xppN2QEKe9/exec";
+
+    function toggleBtn() {
+        document.getElementById('saveBtn').disabled = !document.getElementById('agreeCheck').checked;
+    }
+
+    function calculateAge(dob, displayId) {
+        if (!dob) return;
+        const diff = new Date().getFullYear() - new Date(dob).getFullYear();
+        document.getElementById(displayId).value = diff > 0 ? diff : 0;
+    }
+
+    function resetForm() {
+        document.getElementById('mainForm').style.display = 'none';
+        document.getElementById('searchArea').style.display = 'block';
+        document.getElementById('mainForm').reset();
+        document.getElementById('idCheck').value = "";
+        document.getElementById('idCheck').focus();
+        document.getElementById('saveBtn').disabled = true;
+        document.getElementById('agreeCheck').checked = false;
+        document.getElementById('serial_num').innerText = "---";
+    }
+
+    async function fetchUserData() {
+        const id = document.getElementById('idCheck').value;
+        if(id.length < 9) return Swal.fire('تنبيه', 'يرجى إدخال رقم هوية صحيح ومكون من 9 أرقام', 'warning');
+
+        Swal.fire({ title: 'جاري استضافة بيانات الهوية...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+        try {
+            const res = await fetch(`${SCRIPT_URL}?action=getUser&id=${id}`);
+            const result = await res.json();
+            Swal.close();
+
+            if(result.status === "success") {
+                // حالة 1: الهوية مسجلة مسبقاً في السجلات
+                const d = result.data;
+                document.getElementById('serial_num').innerText = d.col1 || "مسجل";
+                document.getElementById('full_name').value = d.head_name || "";
+                document.getElementById('head_id_display').value = id;
+                document.getElementById('dob_main').value = d.head_dob || "";
+                document.getElementById('age_main').value = d.age || "";
+                document.getElementById('phone_primary').value = d.phone_primary || "";
+                document.getElementById('phone_secondary').value = d.phone_secondary || "";
+                document.getElementById('wife_name').value = d.wife_name || "";
+                document.getElementById('wife_id').value = d.wife_id || "";
+                document.getElementById('wife_age').value = d.wife_age || "";
+                document.getElementById('wife_dob').value = d.wife_dob || "";
+                document.getElementById('marital_status').value = d.marital_status || "متزوج";
+                document.getElementById('member_count').value = d.member_count || "";
+                document.getElementById('disabilities').value = d.disabilities || "";
+                document.getElementById('health_status').value = d.health_status || "";
+                document.getElementById('is_pregnant').value = d.is_pregnant || "لا";
+                document.getElementById('is_nursing').value = d.is_nursing || "لا";
+                document.getElementById('gender_main').value = d.gender || "ذكر";
+                document.getElementById('camp_name').value = d.camp_name || "";
+                document.getElementById('notes').value = d.notes || "";
+
+                const displayName = d.head_name ? d.head_name : "المتقدم للطلب";
+                document.getElementById('declText').innerHTML = `أقر أنا <b>(${displayName})</b> صاحب الهوية رقم <b>(${id})</b> بصحة البيانات المدخلة، وأتحمل المسؤولية عن دقتها أمام إدارة الكرمل.`;
+                
+                // منبثقة وسط الشاشة تفيد بوجود الملف مسبقاً للتعديل
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم العثور على الملف',
+                    text: 'بياناتك مدرجة في النظام، يمكنك مراجعتها وتعديلها الآن مباشرة.',
+                    confirmButtonColor: '#059669',
+                    confirmButtonText: 'تعديل البيانات'
+                }).then(() => {
+                    document.getElementById('mainForm').style.display = 'block';
+                    document.getElementById('searchArea').style.display = 'none';
+                });
+
+            } else {
+                // حالة 2: الهوية غير مسجلة مسبقاً (فتح تسجيل جديد بالكامل)
+                document.getElementById('mainForm').reset();
+                document.getElementById('serial_num').innerText = "جديد (غير مدرج)";
+                document.getElementById('head_id_display').value = id; // وضع رقم الهوية المستعلم عنها في الخانة
+                
+                document.getElementById('declText').innerHTML = `أقر أنا صاحب الهوية رقم <b>(${id})</b> بصحة البيانات المدخلة، وأتحمل المسؤولية القانونية الكاملة عن أي معلومة خاطئة يتم تقديمها لإدارة مدرسة الكرمل.`;
+
+                // منبثقة وسط الشاشة تفيد بفتح نموذج تسجيل جديد
+                Swal.fire({
+                    icon: 'info',
+                    title: 'هوية غير مدرجة مسبقاً',
+                    text: 'رقم الهوية هذا غير مسجل في الكشوفات الخاصة. اضغط موافق للبدء في تعبئة (نموذج تسجيل جديد).',
+                    confirmButtonColor: '#b45309',
+                    confirmButtonText: 'البدء بالتسجيل'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('mainForm').style.display = 'block';
+                        document.getElementById('searchArea').style.display = 'none';
+                    }
+                });
+            }
+        } catch (e) { 
+            Swal.fire('خطأ', 'فشل في جلب البيانات من السجل المركزي أو معالجة الطلب', 'error'); 
+        }
+    }
+
+    async function submitUpdate(e) {
+        e.preventDefault();
+        const btn = document.getElementById('saveBtn');
+        const name = document.getElementById('full_name').value;
+        btn.disabled = true; btn.innerText = "جاري التوثيق...";
+
+        const formData = {
+            action: "updateUser", // تأكد أن السكريبت يستقبل الطلب ويقوم بالإضافة أو التحديث بناء على حالة الهوية
+            head_id: document.getElementById('head_id_display').value,
+            full_name: name,
+            dob: document.getElementById('dob_main').value,
+            age: document.getElementById('age_main').value,
+            phone: document.getElementById('phone_primary').value,
+            phone2: document.getElementById('phone_secondary').value,
+            wife_name: document.getElementById('wife_name').value,
+            wife_id: document.getElementById('wife_id').value,
+            wife_age: document.getElementById('wife_age').value,
+            wife_dob: document.getElementById('wife_dob').value,
+            status: document.getElementById('marital_status').value,
+            member_count: document.getElementById('member_count').value,
+            disabilities: document.getElementById('disabilities').value,
+            health: document.getElementById('health_status').value,
+            is_pregnant: document.getElementById('is_pregnant').value,
+            is_nursing: document.getElementById('is_nursing').value,
+            gender: document.getElementById('gender_main').value,
+            camp: document.getElementById('camp_name').value,
+            notes: document.getElementById('notes').value
+        };
+
+        try {
+            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(formData) });
+            Swal.fire({
+                icon: 'success',
+                title: 'تم الحفظ والتوثيق',
+                html: `الأخ الفاضل <b>${name}</b><br> تم حفظ وتحديث بيانات ملفك بنجاح في مناطق الشهيد عبدالله السبع.`,
+                confirmButtonText: 'إغلاق',
+                confirmButtonColor: '#059669'
+            }).then(() => resetForm());
+        } catch (e) { 
+            Swal.fire('خطأ', 'حدثت مشكلة تقنية أثناء الحفظ', 'error');
+            btn.disabled = false; btn.innerText = "توثيق وحفظ البيانات النهائية";
+        }
+    }
+</script>
+</body>
+</html>
