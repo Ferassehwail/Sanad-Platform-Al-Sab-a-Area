@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -9,7 +10,7 @@
     <style>
         :root { 
             --primary: #0f172a; --gold: #b45309; --accent: #3b82f6; 
-            --bg: #f8fafc; --white: #ffffff;
+            --bg: #f8fafc; --white: #ffffff; --danger: #ef4444;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
         body { background: var(--bg); color: var(--primary); line-height: 1.6; }
@@ -59,8 +60,18 @@
             width: 100%; padding: 13px; border: 1.5px solid #e2e8f0; border-radius: 12px; 
             font-size: 1rem; background: #fcfcfc; transition: 0.3s; color: #1e293b;
         }
-        input:focus { border-color: var(--gold); outline: none; background: #fff; }
+        input:focus, select:focus, textarea:focus { border-color: var(--gold); outline: none; background: #fff; }
         input[readonly] { background: #f8fafc; border-style: dashed; color: #64748b; }
+
+        /* تمييز الحقول الفارغة والمطلوبة عند محاولة الحفظ */
+        .invalid-field {
+            border-color: var(--danger) !important;
+            background-color: #fef2f2 !important;
+        }
+        .invalid-field:focus {
+            border-color: var(--danger) !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+        }
 
         .serial-badge {
             background: #1e293b; color: #fbbf24; padding: 8px 25px;
@@ -101,9 +112,9 @@
 <body>
 
 <div class="hero-section">
-    <h1>بوابة مناطق الشهيد عبدالله السبع </h1>
+    <h1>بوابة مناطق الشهيد عبدالله السبع</h1>
     <p>النظام الذكي لتحديث واستضافة بيانات النازحين - 2026</p>
-    <p>تصميم وتنفيذ / م. فراس محمد سحويل  - 2026</p>
+    <p>تصميم وتنفيذ / م. فراس محمد سحويل - 2026</p>
 </div>
 
 <div class="container">
@@ -115,7 +126,7 @@
         </div>
     </div>
 
-    <form id="mainForm" onsubmit="submitUpdate(event)">
+    <form id="mainForm" onsubmit="submitUpdate(event)" novalidate>
         <div style="text-align: center;">
             <div class="serial-badge">الرقم التسلسلي في الكشف: <span id="serial_num">---</span></div>
         </div>
@@ -123,36 +134,36 @@
         <div class="section-card">
             <div class="section-title">👤 بيانات رب الأسرة الأساسية</div>
             <div class="grid">
-                <div class="form-group"><label>اسم رب الأسرة رباعي</label><input type="text" id="full_name" required placeholder="أدخل الاسم كما في الهوية"></div>
+                <div class="form-group"><label>اسم رب الأسرة رباعي *</label><input type="text" id="full_name" required placeholder="أدخل الاسم كما في الهوية"></div>
                 <div class="form-group"><label>رقم الهوية</label><input type="number" id="head_id_display" readonly></div>
-                <div class="form-group"><label>تاريخ الميلاد</label><input type="date" id="dob_main" onchange="calculateAge(this.value, 'age_main')"></div>
+                <div class="form-group"><label>تاريخ الميلاد *</label><input type="date" id="dob_main" required onchange="calculateAge(this.value, 'age_main')"></div>
                 <div class="form-group"><label>العمر (يُحسب تلقائياً)</label><input type="number" id="age_main" readonly placeholder="0"></div>
-                <div class="form-group"><label>رقم الجوال الأساسي</label><input type="tel" id="phone_primary" required placeholder="059XXXXXXX"></div>
+                <div class="form-group"><label>رقم الجوال الأساسي *</label><input type="tel" id="phone_primary" required placeholder="059XXXXXXX"></div>
                 <div class="form-group"><label>رقم الجوال الاحتياطي</label><input type="tel" id="phone_secondary" placeholder="اختياري"></div>
-                <div class="form-group"><label>جنس رب الأسرة</label><select id="gender_main"><option value="ذكر">ذكر</option><option value="أنثى">أنثى</option></select></div>
-                <div class="form-group"><label>الحالة الاجتماعية</label><select id="marital_status"><option value="متزوج">متزوج</option><option value="أرمل">أرمل</option><option value="مطلق">مطلق</option><option value="أعزب">أعزب</option></select></div>
+                <div class="form-group"><label>جنس رب الأسرة *</label><select id="gender_main" required><option value="ذكر">ذكر</option><option value="أنثى">أنثى</option></select></div>
+                <div class="form-group"><label>الحالة الاجتماعية *</label><select id="marital_status" required onchange="handleMaritalStatusChange()"><option value="متزوج">متزوج</option><option value="أرمل">أرمل</option><option value="مطلق">مطلق</option><option value="أعزب">أعزب</option></select></div>
             </div>
         </div>
 
-        <div class="section-card">
+        <div class="section-card" id="wifeSection">
             <div class="section-title">👩 سجل بيانات الزوجة</div>
             <div class="grid">
-                <div class="form-group"><label>اسم الزوجة رباعي</label><input type="text" id="wife_name"></div>
-                <div class="form-group"><label>رقم هوية الزوجة</label><input type="number" id="wife_id"></div>
-                <div class="form-group"><label>تاريخ ميلاد الزوجة</label><input type="date" id="wife_dob" onchange="calculateAge(this.value, 'wife_age')"></div>
+                <div class="form-group"><label>اسم الزوجة رباعي *</label><input type="text" id="wife_name"></div>
+                <div class="form-group"><label>رقم هوية الزوجة *</label><input type="number" id="wife_id"></div>
+                <div class="form-group"><label>تاريخ ميلاد الزوجة *</label><input type="date" id="wife_dob" onchange="calculateAge(this.value, 'wife_age')"></div>
                 <div class="form-group"><label>عمر الزوجة</label><input type="number" id="wife_age" readonly placeholder="0"></div>
-                <div class="form-group"><label>هل الزوجة حامل؟</label><select id="is_pregnant"><option value="لا">لا</option><option value="نعم">نعم</option></select></div>
-                <div class="form-group"><label>هل الزوجة مرضع؟</label><select id="is_nursing"><option value="لا">لا</option><option value="نعم">نعم</option></select></div>
+                <div class="form-group"><label>هل الزوجة حامل؟ *</label><select id="is_pregnant"><option value="لا">لا</option><option value="نعم">نعم</option></select></div>
+                <div class="form-group"><label>هل الزوجة مرضع؟ *</label><select id="is_nursing"><option value="لا">لا</option><option value="نعم">نعم</option></select></div>
             </div>
         </div>
 
         <div class="section-card">
             <div class="section-title">🏠 مكان النزوح والحالة العامة</div>
             <div class="grid">
-                <div class="form-group"><label>إجمالي عدد أفراد الأسرة</label><input type="number" id="member_count" placeholder="بما فيهم الأب والأم"></div>
-                <div class="form-group"><label>اسم المخيم / مكان السكن الحالي</label><input type="text" id="camp_name" placeholder="مثال: مخيم جباليا"></div>
-                <div class="form-group"><label>امراض مزمنة (إن وجد)</label><input type="text" id="disabilities" placeholder="لا يوجد"></div>
-                <div class="form-group"><label>الحالة الصحية العامة</label><input type="text" id="health_status" placeholder="جيدة / أمراض مزمنة"></div>
+                <div class="form-group"><label>إجمالي عدد أفراد الأسرة *</label><input type="number" id="member_count" required placeholder="بما فيهم الأب والأم"></div>
+                <div class="form-group"><label>اسم المخيم / مكان السكن الحالي *</label><input type="text" id="camp_name" required placeholder="مثال: مخيم جباليا"></div>
+                <div class="form-group"><label>أمراض مزمنة *</label><input type="text" id="disabilities" required placeholder="اكتب لا يوجد إن لم يتوفر"></div>
+                <div class="form-group"><label>الحالة الصحية العامة *</label><input type="text" id="health_status" required placeholder="جيدة / أمراض مزمنة"></div>
             </div>
             <div class="form-group" style="margin-top:20px;">
                 <label>ملاحظات إضافية تود ذكرها للإدارة</label>
@@ -163,7 +174,7 @@
         <div class="declaration-box">
             <input type="checkbox" id="agreeCheck" onchange="toggleBtn()">
             <div class="declaration-text" id="declText">
-                أقر أنا الموضح اسمي أعلاه بصحة كافة البيانات المدخلة، وأتحمل المسؤولية القانونية الكاملة عن أي معلومة خاطئة يتم تقديمها لإدارة مدرسة الكرمل.
+                أقر أنا الموضح اسمي أعلاه بصحة كافة البيانات المدخلة، وأتحمل المسؤولية القانونية الكاملة عن أي معلومة خاطئة يتم تقديمها لإدارة مناطق الشهيد عبدالله السبع.
             </div>
         </div>
 
@@ -190,8 +201,42 @@
 
     function calculateAge(dob, displayId) {
         if (!dob) return;
-        const diff = new Date().getFullYear() - new Date(dob).getFullYear();
-        document.getElementById(displayId).value = diff > 0 ? diff : 0;
+        const birthDate = new Date(dob);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        document.getElementById(displayId).value = age > 0 ? age : 0;
+    }
+
+    // إدارة الحقول الإلزامية للزوجة بناءً على الحالة الاجتماعية
+    function handleMaritalStatusChange() {
+        const status = document.getElementById('marital_status').value;
+        const wifeFields = ['wife_name', 'wife_id', 'wife_dob', 'is_pregnant', 'is_nursing'];
+        const wifeSection = document.getElementById('wifeSection');
+
+        if (status === 'متزوج') {
+            wifeSection.style.opacity = '1';
+            wifeSection.style.pointerEvents = 'auto';
+            wifeFields.forEach(id => {
+                document.getElementById(id).required = true;
+                // إضافة علامة النجمة بجانب العناوين برمجياً
+                const label = document.getElementById(id).previousElementSibling;
+                if(label && !label.innerText.includes('*')) label.innerText += ' *';
+            });
+        } else {
+            wifeSection.style.opacity = '0.5';
+            wifeFields.forEach(id => {
+                const field = document.getElementById(id);
+                field.required = false;
+                field.classList.remove('invalid-field');
+                const label = field.previousElementSibling;
+                if(label && label.innerText.includes('*')) label.innerText = label.innerText.replace(' *', '');
+            });
+        }
     }
 
     function resetForm() {
@@ -203,6 +248,19 @@
         document.getElementById('saveBtn').disabled = true;
         document.getElementById('agreeCheck').checked = false;
         document.getElementById('serial_num').innerText = "---";
+        
+        // إزالة علامات الأخطاء عند التهيئة
+        document.querySelectorAll('.invalid-field').forEach(el => el.classList.remove('invalid-field'));
+        toggleFormInputs(false);
+    }
+
+    function toggleFormInputs(disabled) {
+        const inputs = document.querySelectorAll("#mainForm input, #mainForm select, #mainForm textarea");
+        inputs.forEach(input => {
+            if (input.id !== 'head_id_display' && input.id !== 'age_main' && input.id !== 'wife_age') {
+                input.disabled = disabled;
+            }
+        });
     }
 
     async function fetchUserData() {
@@ -217,7 +275,6 @@
             Swal.close();
 
             if(result.status === "success") {
-                // حالة 1: الهوية مسجلة مسبقاً في السجلات
                 const d = result.data;
                 document.getElementById('serial_num').innerText = d.col1 || "مسجل";
                 document.getElementById('full_name').value = d.head_name || "";
@@ -240,10 +297,11 @@
                 document.getElementById('camp_name').value = d.camp_name || "";
                 document.getElementById('notes').value = d.notes || "";
 
+                handleMaritalStatusChange();
+
                 const displayName = d.head_name ? d.head_name : "المتقدم للطلب";
-                document.getElementById('declText').innerHTML = `أقر أنا <b>(${displayName})</b> صاحب الهوية رقم <b>(${id})</b> بصحة البيانات المدخلة، وأتحمل المسؤولية عن دقتها أمام إدارة الكرمل.`;
+                document.getElementById('declText').innerHTML = `أقر أنا <b>(${displayName})</b> صاحب الهوية رقم <b>(${id})</b> بصحة البيانات المدخلة، وأتحمل المسؤولية عن دقتها أمام إدارة مناطق الشهيد عبدالله السبع.`;
                 
-                // منبثقة وسط الشاشة تفيد بوجود الملف مسبقاً للتعديل
                 Swal.fire({
                     icon: 'success',
                     title: 'تم العثور على الملف',
@@ -256,14 +314,15 @@
                 });
 
             } else {
-                // حالة 2: الهوية غير مسجلة مسبقاً (فتح تسجيل جديد بالكامل)
                 document.getElementById('mainForm').reset();
                 document.getElementById('serial_num').innerText = "جديد (غير مدرج)";
-                document.getElementById('head_id_display').value = id; // وضع رقم الهوية المستعلم عنها في الخانة
+                document.getElementById('head_id_display').value = id; 
+                document.getElementById('marital_status').value = "متزوج";
                 
-                document.getElementById('declText').innerHTML = `أقر أنا صاحب الهوية رقم <b>(${id})</b> بصحة البيانات المدخلة، وأتحمل المسؤولية القانونية الكاملة عن أي معلومة خاطئة يتم تقديمها لإدارة مدرسة الكرمل.`;
+                handleMaritalStatusChange();
+                
+                document.getElementById('declText').innerHTML = `أقر أنا صاحب الهوية رقم <b>(${id})</b> بصحة البيانات المدخلة، وأتحمل المسؤولية القانونية الكاملة عن أي معلومة خاطئة يتم تقديمها لإدارة مناطق الشهيد عبدالله السبع.`;
 
-                // منبثقة وسط الشاشة تفيد بفتح نموذج تسجيل جديد
                 Swal.fire({
                     icon: 'info',
                     title: 'هوية غير مدرجة مسبقاً',
@@ -284,12 +343,43 @@
 
     async function submitUpdate(e) {
         e.preventDefault();
+        
+        const form = document.getElementById('mainForm');
+        const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+        let isFormValid = true;
+        let firstInvalidInput = null;
+
+        // فحص الحقول وإضافة كلاس التنبيه باللون الأحمر للحقول الفارغة
+        inputs.forEach(input => {
+            if (!input.value.trim()) {
+                input.classList.add('invalid-field');
+                isFormValid = false;
+                if (!firstInvalidInput) firstInvalidInput = input;
+            } else {
+                input.classList.remove('invalid-field');
+            }
+        });
+
+        // إضافة مستمعي أحداث للحقول لتنظيف التنبيه بمجرد الكتابة
+        inputs.forEach(input => {
+            input.oninput = () => { if(input.value.trim()) input.classList.remove('invalid-field'); };
+            input.onchange = () => { if(input.value.trim()) input.classList.remove('invalid-field'); };
+        });
+
+        if (!isFormValid) {
+            if (firstInvalidInput) firstInvalidInput.focus();
+            return Swal.fire('تنبيه هام', 'يرجى تعبئة كافة الحقول المطلوبة والمعلمة باللون الأحمر قبل الحفظ.', 'warning');
+        }
+
         const btn = document.getElementById('saveBtn');
         const name = document.getElementById('full_name').value;
-        btn.disabled = true; btn.innerText = "جاري التوثيق...";
+        
+        btn.disabled = true; 
+        btn.innerText = "جاري التوثيق...";
+        toggleFormInputs(true);
 
         const formData = {
-            action: "updateUser", // تأكد أن السكريبت يستقبل الطلب ويقوم بالإضافة أو التحديث بناء على حالة الهوية
+            action: "updateUser", 
             head_id: document.getElementById('head_id_display').value,
             full_name: name,
             dob: document.getElementById('dob_main').value,
@@ -312,7 +402,11 @@
         };
 
         try {
-            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(formData) });
+            await fetch(SCRIPT_URL, { 
+                method: 'POST', 
+                body: JSON.stringify(formData) 
+            });
+            
             Swal.fire({
                 icon: 'success',
                 title: 'تم الحفظ والتوثيق',
@@ -320,9 +414,12 @@
                 confirmButtonText: 'إغلاق',
                 confirmButtonColor: '#059669'
             }).then(() => resetForm());
+            
         } catch (e) { 
-            Swal.fire('خطأ', 'حدثت مشكلة تقنية أثناء الحفظ', 'error');
-            btn.disabled = false; btn.innerText = "توثيق وحفظ البيانات النهائية";
+            Swal.fire('خطأ', 'حدثت مشكلة تقنية أثناء الحفظ، يرجى التحقق من الاتصال', 'error');
+            btn.disabled = false; 
+            btn.innerText = "توثيق وحفظ البيانات النهائية";
+            toggleFormInputs(false);
         }
     }
 </script>
